@@ -79,16 +79,20 @@ def walk_forward_fusion(X: pd.DataFrame, fwd: Forward, costs: CostModel,
     model = None
     importances = None
     day_of = X.index.get_level_values("date")
+    max_train_rows = 200_000
     for m in uniq_months:
         tr = ok & (months < m) & active
         te = (months == m) & active
         if tr.sum() < min_train_days * 5 or te.sum() == 0:
             continue
+        tr_idx = np.where(tr)[0]
+        if len(tr_idx) > max_train_rows:      # keep the most recent rows
+            tr_idx = tr_idx[-max_train_rows:]
         # date-based expanding window; retrain monthly
         model = HistGradientBoostingRegressor(
-            max_iter=200, max_depth=4, learning_rate=0.06,
+            max_iter=150, max_depth=4, learning_rate=0.06,
             l2_regularization=1.0, random_state=seed)
-        model.fit(Xv[tr], y[tr])
+        model.fit(Xv[tr_idx], y[tr_idx])
         score[te] = model.predict(Xv[te])
     if model is not None:
         samp = np.where(ok & active)[0]

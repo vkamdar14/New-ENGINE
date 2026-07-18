@@ -1,0 +1,32 @@
+[05:30:30] calibrating simulator on real S&P 500 (arch package)...
+[calibration] real S&P 500 1999-01-04..2018-12-31 n=5030
+                      mu = 0.000645905
+                   omega = 8.64065e-07
+                   alpha = 0.0994918
+                    beta = 0.900158
+                   t_dof = 6.50936
+     overnight_var_share = 0.0188815
+                 gap_std = 0.00160767
+     volume_abs_ret_beta = 2.59726
+         range_var_ratio = 0.693402
+[05:30:31] simulating 500 stocks x 6.25 years...
+/home/user/New-ENGINE/engine/backtest/engine.py:44: RuntimeWarning: Mean of empty slice
+  self.mkt_cc = np.nanmean(self.cc, axis=1)
+[05:30:33] panel: 787,500 rows, 500 tickers, 1575 days
+[05:30:48] detector           lmw:  11,432 signals ( 15.5s)
+[05:30:50] detector       candles: 131,902 signals (  1.6s)
+[05:30:52] detector        levels: 658,522 signals (  2.3s)
+[05:30:53] detector       anchors: 269,624 signals (  0.7s)
+[05:30:54] detector     breakouts: 310,997 signals (  1.7s)
+[05:30:56] detector          gaps: 448,002 signals (  1.6s)
+[05:30:57] detector        volume: 114,394 signals (  1.0s)
+[05:30:58] detector         trend: 702,448 signals (  1.5s)
+[05:30:59] detector  fundamentals:  17,143 signals (  0.8s)
+[05:31:01] detector         novel: 259,300 signals (  1.8s)
+  [ml] rendering train images (240 days x 500 tickers)...
+  [ml] train set: 120000 images, base rate 0.505
+/home/user/New-ENGINE/engine/patterns/ml_cnn.py:110: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:822.)
+  tot += float(loss) * len(idx)
+    [cnn] epoch 1/4 loss=0.6932
+    [cnn] epoch 2/4 loss=0.6913
