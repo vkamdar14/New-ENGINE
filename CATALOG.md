@@ -262,11 +262,17 @@ sharply value-weighted; turnover is extreme, so **net-of-cost viability in
 large caps is doubtful** (the authors say as much); post-2019 out-of-sample
 evidence mixed.
 
-**Honest verdict.** The single most powerful *pure-chart* technology known —
-and still **cost-challenged at daily horizons in liquid names**. In our
-engine the CNN rediscovers the embedded news-drift + momentum structure from
-raw images (its top-decile hit rate exceeds every single hand rule), which is
-precisely JKX's qualitative finding.
+**Honest verdict.** The single most powerful *pure-chart* technology known
+per the published record — and still **cost-challenged at daily horizons in
+liquid names**. Our own engine result is a *negative* and we report it as
+such: the compute-bounded CNN (2 conv blocks, 4 epochs, 120k images, CPU)
+learned almost nothing — training loss 0.6932 → 0.6877 against ln 2 =
+0.6931, out-of-sample top-decile hit rate 48.8%, ml family −1.4 bp/day net,
+and near-zero alignment with the simulator's embedded drift
+(`results/ground_truth_recovery.csv`). JKX's positive result uses millions
+of images and far larger models/compute; at this scale the method does not
+replicate, and the catalog does not count the CNN as a working edge in this
+build. The fusion model accordingly assigns it minimal weight.
 
 ## 10. Fundamentals: business quality / moat
 

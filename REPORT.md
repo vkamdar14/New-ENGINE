@@ -65,7 +65,11 @@ and volume (+0.7) are positive standalone; gaps net ≈ 0 standalone because
 equal-weighting mixes the strong cells with the sub-cost small-gap cells —
 exactly why fusion (which weights cells) earns 15 bp while the naive z-sum
 baseline loses money. Candles (−3.3), levels (−2.3) and the novel family
-(−10.0) are honestly negative after costs.
+(−10.0) are honestly negative after costs. The image-CNN is a **negative
+result at this compute scale**: training loss barely moved off chance
+(0.6932 → 0.6877 vs ln 2), top-decile hit rate 48.8%, −1.4 bp/day standalone
+— JKX's published effect needs orders of magnitude more data/compute than
+this sandbox allows, and we do not count the CNN as a working edge here.
 
 ## Ground-truth recovery (placebo integrity)
 
