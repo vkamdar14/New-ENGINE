@@ -92,6 +92,6 @@ def breakout_interaction_table(panel: pd.DataFrame) -> pd.DataFrame:
                 "news": has_news, "rvol": tname, "n": n,
                 "nextday_drift_bps": 1e4 * float(nd.where(m).stack().mean()),
                 "d5_drift_bps": 1e4 * float(d5.where(m).stack().mean()),
-                "p_nextday_cont": float((nd.where(m) > 0).stack().mean()),
+                "p_nextday_cont": float((nd > 0).where(m).stack().mean()),
             })
     return pd.DataFrame(rows)

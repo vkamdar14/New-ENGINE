@@ -31,3 +31,32 @@ Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pyto
     [cnn] epoch 1/4 loss=0.6932
     [cnn] epoch 2/4 loss=0.6913
     [cnn] epoch 3/4 loss=0.6899
+    [cnn] epoch 4/4 loss=0.6877
+  [ml] predicting 189 out-of-sample grid days...
+[05:36:55] detector            ml:  18,900 signals (353.9s)
+[05:36:57] signals total 2,942,664; in 5y test window 2,550,593 (window starts 2021-07-17)
+[05:37:38] event-study stats written (109 signals)
+[05:37:41] running news x charts interaction study...
+[05:37:51] building fusion features + walk-forward meta-model...
+/home/user/New-ENGINE/engine/fusion/meta.py:122: RuntimeWarning: Mean of empty slice
+  r_g = (np.nanmean(rl) - np.nanmean(rs)) / 2.0   # 100% gross exposure
+/home/user/New-ENGINE/engine/fusion/meta.py:142: RuntimeWarning: Mean of empty slice
+  r_g = (np.nanmean(y_ser.loc[(d, g.index[-n_side:])].values)
+/home/user/New-ENGINE/engine/fusion/meta.py:143: RuntimeWarning: Mean of empty slice
+  - np.nanmean(y_ser.loc[(d, g.index[:n_side])].values)) / 2.0
+[05:38:36] FUSED NET avg daily: 15.0 bp (target 100 bp)
+[05:38:36] rendering visual deliverables...
+  [viz] wrote results/equity_curve.png
+  [viz] wrote results/drawdown.png
+  [viz] wrote results/bootstrap_hist.png
+  [viz] wrote results/attribution.png
+  [viz] wrote results/interaction_heatmap.png
+  [viz] wrote results/sample_trades/00_gaps_gap_up_huge_news_hotvol_S139_2026-02-04.png
+  [viz] wrote results/sample_trades/01_gaps_gap_up_huge_news_S146_2026-03-23.png
+  [viz] wrote results/sample_trades/02_lmw_bull_flag_S192_2022-06-27.png
+  [viz] wrote results/sample_trades/03_lmw_bull_flag_S276_2026-06-19.png
+  [viz] wrote results/sample_trades/04_breakouts_orb_30min_up_S478_2021-07-19.png
+  [viz] wrote results/sample_trades/05_breakouts_orb_30min_up_S347_2021-07-19.png
+  [viz] wrote results/sample_trades/06_anchors_far_52wk_high_S091_2022-01-20.png
+  [viz] wrote results/sample_trades/07_anchors_far_52wk_high_S405_2024-12-06.png
+[05:38:40] summary.json written; target_hit=False
