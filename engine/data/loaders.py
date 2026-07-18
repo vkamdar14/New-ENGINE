@@ -2,9 +2,22 @@
 
 STATUS IN THIS SANDBOX: every one of these hosts is blocked by the egress
 proxy (verified: CONNECT 403 for stooq.com, query1.finance.yahoo.com,
-api.gdeltproject.org).  The adapters are shipped ready-to-run so the
-identical pipeline can be re-run on real data from any network-enabled
-environment:  `python -m engine.run_all --source real --tickers-file sp500.txt`
+api.gdeltproject.org).  From a network-enabled environment:
+
+    echo "AAPL MSFT ..." > tickers.txt
+    python -m engine.run_all --source real
+
+WHAT THE FREE LOADERS DO AND DO NOT COVER (be explicit -- three catalog
+families need data these free sources cannot provide and degrade to empty
+on the real path until you plug a source in):
+  * fundamentals/moat: `quality` is left NaN (plug in your fundamentals
+    vendor); the fundamentals detector returns no signals on real data.
+  * opening-range breakout: `or30_high/low` need intraday bars (e.g.
+    Polygon/Alpaca); left NaN, so orb_* signals are skipped on real data.
+  * news_sign (headline tone) is left 0; `catalyst` (0/1) IS populated from
+    GDELT article-volume z-scores when reachable.
+Everything else -- all price/volume detectors, the interaction study, the
+backtester, and fusion -- runs unchanged on the real panel.
 
 The output contract matches engine.data.synthetic.simulate(): a MultiIndex
 (date, ticker) panel with open/high/low/close/volume plus, when a news
@@ -112,11 +125,21 @@ def load_real_panel(tickers: list[str], start: str, end: str,
     panel["or30_high"] = np.nan
     panel["or30_low"] = np.nan
     if with_news:
+        consecutive_failures = 0
         for t in tickers:
             try:
                 nv = fetch_gdelt_news_volume(f'"{t}" stock', start, end)
-            except DataSourceBlocked:
-                break
+                consecutive_failures = 0
+            except DataSourceBlocked as e:
+                # tolerate per-ticker hiccups (rate limits etc.) but stop
+                # hammering a host that is clearly unreachable
+                consecutive_failures += 1
+                print(f"[loaders] news volume failed for {t}: {e}")
+                if consecutive_failures >= 3:
+                    print("[loaders] news source unreachable; catalyst "
+                          "flags incomplete for remaining tickers")
+                    break
+                continue
             flags = catalyst_flags_from_news_volume(nv)
             idx = panel.loc[(slice(None), t), :].index
             aligned = flags.reindex(idx.get_level_values("date")).fillna(0).values

@@ -33,6 +33,12 @@ echo "AAPL MSFT ..." > tickers.txt
 python -m engine.run_all --source real
 ```
 
+  The free real-data path covers all price/volume families, GDELT catalyst
+  flags, the interaction study, and fusion. Three families need data the
+  free sources don't provide and return no signals until you plug a vendor
+  in: fundamentals (quality scores), opening-range breakouts (intraday
+  bars), and news tone (`news_sign`).
+
 ## Run
 
 ```bash

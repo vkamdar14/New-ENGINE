@@ -15,8 +15,11 @@ the series ships inside the `arch` package) and whose embedded effects are set
 to **published magnitudes** (§ Ground truth). Synthetic results validate the
 *machinery* — that the detectors find what is truly there and reject what
 isn't. Verdicts about the real world cite the literature. `engine/data/
-loaders.py` re-runs the identical pipeline on real data from any
-network-enabled environment.
+loaders.py` re-runs the same detector/backtest/fusion code on real data
+from any network-enabled environment, with three disclosed gaps until you
+plug in paid sources: fundamentals (needs a fundamentals vendor), ORB
+(needs intraday bars), and news tone (GDELT supplies catalyst flags only) —
+those families degrade to empty rather than fabricate.
 
 **Cost model** (per side): 3 bp half-spread + 4 bp impact + 0.5 bp
 commission = 7.5 bp; 15 bp round trip. Liquid US large/mid caps, modest size.

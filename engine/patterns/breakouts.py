@@ -1,9 +1,12 @@
 """Breakout systems: opening-range, Donchian channels, volatility
 contraction (VCP), with news/volume qualifiers.
 
-  * orb_30min_{up|dn}: close of the first 30 minutes breaks that range's
-    high/low (requires intraday fields; synthesized on the simulator,
-    NaN -> skipped on real daily data).  Crabel (1990) / Holmberg et al.
+  * orb_30min_{up|dn}: the daily CLOSE finishes beyond the first-30-minute
+    range (EOD-confirmed opening-range hold; entry at that close).  This is
+    deliberately NOT the intraday-executed ORB of Crabel (1990) -- honest
+    intraday execution needs intraday data (see loaders.py).  Requires
+    or30 fields; synthesized on the simulator, NaN -> skipped on real
+    daily data.
   * donchian{20,55}_{up|dn}: Turtle/Donchian channel breakout on close vs
     prior N-day extreme of closes.  Faith (2007); Moskowitz et al. TS-mom.
   * vcp_breakout: >=3 successively tighter 5-day ranges (each < 75% of the

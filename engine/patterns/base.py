@@ -10,10 +10,12 @@ detect(panel, ctx) -> DataFrame with columns:
     horizon   : int            (intended holding days; backtester also tests all)
 
 HARD RULES (enforced by tests + adversarial review):
-  * No row may use any data after `date`'s close (ORB signals may use the
-    same day's first-30-minute fields ONLY, and are flagged intraday=True
-    via signal name prefix "orb_" -- their entry is same-day, after the
-    first half hour, at or30 breakout level).
+  * No row may use any data after `date`'s close.  Signals prefixed
+    "gap_"/"orb_" are stamped on the event day and entered at that day's
+    CLOSE (never earlier): orb_* is explicitly an *EOD-confirmed*
+    opening-range hold -- "the close finished beyond the first-30-minute
+    range" -- not an intraday-executed ORB, which would require intraday
+    fills the daily backtester cannot honestly model.
   * Detectors receive the full panel for vectorization but must only use
     shifted/rolling constructs that respect the information date.
 """
