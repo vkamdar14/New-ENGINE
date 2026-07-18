@@ -185,25 +185,34 @@ def sample_trade_chart(panel: pd.DataFrame, ticker: str,
 
 
 def interaction_heat(table: pd.DataFrame, outdir: str):
-    """News x size continuation heat-map (next-day drift bps, all-volume)."""
+    """News x size continuation heat-maps: next-day AND 5-day drift (bp)."""
     t = table[table["rvol"] == "all"]
-    piv = t.pivot_table(index="news", columns="size", values="nextday_drift_bps")
-    piv = piv.reindex(index=[True, False],
-                      columns=["small", "mid", "large", "huge"])
-    fig, ax = plt.subplots(figsize=(7.5, 2.8))
-    v = np.nanmax(np.abs(piv.values)) or 1.0
-    im = ax.imshow(piv.values, cmap="RdBu_r", vmin=-v, vmax=v, aspect="auto")
-    ax.set_xticks(range(4), ["small\n0.5-1.5%", "mid\n1.5-3%",
-                             "large\n3-7%", "huge\n>7%"])
-    ax.set_yticks([0, 1], ["news catalyst", "no news"])
-    for i in range(piv.shape[0]):
-        for j in range(piv.shape[1]):
-            val = piv.values[i, j]
-            if np.isfinite(val):
-                ax.annotate(f"{val:+.0f}", (j, i), ha="center", va="center",
-                            color=INK, fontsize=10, fontweight="bold")
-    ax.set_title("Gap next-day drift in gap direction (bp) -- news vs no news",
-                 loc="left", fontweight="bold")
-    ax.grid(False)
-    fig.colorbar(im, ax=ax, shrink=0.8, label="bp")
+    fig, axes = plt.subplots(1, 2, figsize=(13, 3.4),
+                             gridspec_kw={"wspace": 0.08})
+    specs = [("nextday_drift_bps", "Next-day drift in gap direction (bp)"),
+             ("d5_drift_bps", "5-day drift in gap direction (bp)")]
+    v = max(np.nanmax(np.abs(t[c].values)) for c, _ in specs) or 1.0
+    for k, (ax, (col, title)) in enumerate(zip(axes, specs)):
+        piv = t.pivot_table(index="news", columns="size", values=col)
+        piv = piv.reindex(index=[True, False],
+                          columns=["small", "mid", "large", "huge"])
+        im = ax.imshow(piv.values, cmap="RdBu_r", vmin=-v, vmax=v,
+                       aspect="auto")
+        ax.set_xticks(range(4), ["small\n0.5-1.5%", "mid\n1.5-3%",
+                                 "large\n3-7%", "huge\n>7%"])
+        if k == 0:
+            ax.set_yticks([0, 1], ["news catalyst", "no news"])
+        else:
+            ax.set_yticks([0, 1], ["", ""])
+        for i in range(piv.shape[0]):
+            for j in range(piv.shape[1]):
+                val = piv.values[i, j]
+                if np.isfinite(val):
+                    ax.annotate(f"{val:+.0f}", (j, i), ha="center",
+                                va="center", color=INK, fontsize=10,
+                                fontweight="bold")
+        ax.set_title(title, loc="left", fontweight="bold", fontsize=10.5,
+                     pad=10)
+        ax.grid(False)
+    fig.colorbar(im, ax=axes, shrink=0.8, label="bp")
     _save(fig, os.path.join(outdir, "interaction_heatmap.png"))
