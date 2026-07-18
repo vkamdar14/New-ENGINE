@@ -1,0 +1,21 @@
+[05:52:02] calibrating simulator on real S&P 500 (arch package)...
+[calibration] real S&P 500 1999-01-04..2018-12-31 n=5030
+                      mu = 0.000645905
+                   omega = 8.64065e-07
+                   alpha = 0.0994918
+                    beta = 0.900158
+                   t_dof = 6.50936
+     overnight_var_share = 0.0188815
+                 gap_std = 0.00160767
+     volume_abs_ret_beta = 2.59726
+         range_var_ratio = 0.693402
+[05:52:03] simulating 500 stocks x 6.25 years...
+/home/user/New-ENGINE/engine/backtest/engine.py:47: RuntimeWarning: Mean of empty slice
+  np.nanmean(self.cc, axis=1))
+[05:52:04] panel: 787,500 rows, 500 tickers, 1575 days
+[05:52:19] detector           lmw:  11,526 signals ( 15.3s)
+[05:52:21] detector       candles: 131,028 signals (  1.5s)
+[05:52:23] detector        levels: 664,379 signals (  2.1s)
+[05:52:23] detector       anchors: 268,124 signals (  0.6s)
+[05:52:25] detector     breakouts: 325,065 signals (  1.5s)
+[05:52:26] detector          gaps: 448,546 signals (  1.3s)
