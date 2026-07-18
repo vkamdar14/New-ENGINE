@@ -39,6 +39,8 @@ def main(argv=None):
                     choices=["synthetic", "real"])
     ap.add_argument("--fast", action="store_true")
     ap.add_argument("--no-ml", action="store_true")
+    ap.add_argument("--reuse-ml", action="store_true",
+                    help="load cached ML signals from outdir if present")
     ap.add_argument("--outdir", default="results")
     ap.add_argument("--seed", type=int, default=7)
     args = ap.parse_args(argv)
@@ -79,13 +81,20 @@ def main(argv=None):
             f"({time.time() - t0:5.1f}s)")
         all_sigs.append(s)
     if not args.no_ml:
-        t0 = time.time()
-        s = detect_ml(panel, seed=args.seed)
-        log(f"detector {'ml':>13s}: {len(s):7,} signals "
-            f"({time.time() - t0:5.1f}s)")
+        ml_cache = f"{cfg.outdir}/ml_signals.pkl"
+        if args.reuse_ml and os.path.exists(ml_cache):
+            s = pd.read_pickle(ml_cache)
+            log(f"detector {'ml':>13s}: {len(s):7,} signals (cached)")
+        else:
+            t0 = time.time()
+            s = detect_ml(panel, seed=args.seed)
+            s.to_pickle(ml_cache)
+            log(f"detector {'ml':>13s}: {len(s):7,} signals "
+                f"({time.time() - t0:5.1f}s)")
         all_sigs.append(s)
     signals = pd.concat(all_sigs, ignore_index=True)
     signals["date"] = pd.to_datetime(signals["date"])
+    signals.to_pickle(f"{cfg.outdir}/signals.pkl")
 
     # restrict scoring to the contiguous test window (last test_years)
     test_start = data["dates"][-1] - pd.DateOffset(years=cfg.test_years)
@@ -135,6 +144,8 @@ def main(argv=None):
     achieved = float(net.mean())
     log(f"FUSED NET avg daily: {achieved * 1e4:.1f} bp "
         f"(target {cfg.target_daily * 1e4:.0f} bp)")
+    pd.DataFrame({"net": net, "gross": gross, "linear_net": lin_net}
+                 ).to_csv(f"{cfg.outdir}/fused_daily_returns.csv")
 
     draws = bootstrap_avg_daily(net, cfg.n_bootstrap)
 

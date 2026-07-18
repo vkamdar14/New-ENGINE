@@ -30,3 +30,4 @@ Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pyto
   tot += float(loss) * len(idx)
     [cnn] epoch 1/4 loss=0.6932
     [cnn] epoch 2/4 loss=0.6913
+    [cnn] epoch 3/4 loss=0.6899
