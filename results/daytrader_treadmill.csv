@@ -1,0 +1,13 @@
+cycles_per_day,costs,net_daily_bps,net_annual_pct
+1,retail 5bp,-5.0,-12.6
+1,active 15bp,-15.0,-37.8
+2,retail 5bp,-10.0,-25.2
+2,active 15bp,-30.0,-75.6
+3,retail 5bp,-15.0,-37.8
+3,active 15bp,-45.0,-113.4
+5,retail 5bp,-25.0,-63.0
+5,active 15bp,-75.0,-189.0
+10,retail 5bp,-50.0,-126.0
+10,active 15bp,-150.0,-378.0
+20,retail 5bp,-100.0,-252.0
+20,active 15bp,-300.0,-756.0
