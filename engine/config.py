@@ -58,9 +58,18 @@ class SimConfig:
     jump_sigma_ln: float = 0.55          # lognormal sigma of |jump|
     jump_mu_ln: float = -3.15            # median |jump| ~ 4.3%
     pead_share: float = 0.10             # share of news jump that continues as drift
-    pead_days: int = 10                  # over this many days (PEAD-calibrated)
+    pead_days: int = 10                  # over this many days (PEAD-calibrated),
+                                         # starting the day AFTER the event
     news_vol_mult_lo: float = 2.0        # RVOL multiplier on event day
     news_vol_mult_hi: float = 8.0
+    # attention scaling: PEAD share is multiplied by (vol_mult / mean_mult),
+    # so high-attention events drift more (PEAD-on-volume evidence)
+    pead_vol_scaling: bool = True
+    # share of all persistent drifts (pead/anchor/alpha/quality) accruing
+    # overnight rather than intraday (Lou-Polk-Skouras 2019: much of factor
+    # drift accrues overnight).  Makes next-open entries capture LESS of the
+    # embedded edge -- the conservative direction.
+    drift_on_share: float = 0.35
 
     # no-news overnight gaps partially fade (Plastun et al.-style)
     nonews_gap_fade: float = -0.12       # E[next-day r] = fade * gap size

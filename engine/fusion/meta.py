@@ -65,7 +65,7 @@ def walk_forward_fusion(X: pd.DataFrame, fwd: Forward, costs: CostModel,
     di = X.index.get_level_values("date").map(pos_d).values
     tj = X.index.get_level_values("ticker").map(pos_t).values
     y_raw = fwd.fwd_no[1][di, tj]
-    y = y_raw - fwd.mkt_h[1][di]
+    y = y_raw - fwd.mkt_h_no[1][di]
     feat_cols = list(X.columns)
     Xv = X.values.astype(np.float64)
     Xv[~np.isfinite(Xv)] = 0.0
@@ -109,7 +109,6 @@ def walk_forward_fusion(X: pd.DataFrame, fwd: Forward, costs: CostModel,
     picks = []
     rt = costs.round_trip_bps / 1e4
     y_ser = pd.Series(y_raw, index=X.index)
-    mkt1 = pd.Series(fwd.mkt_h[1][di], index=X.index)
     for d, g in sc.groupby(level="date"):
         g = g.droplevel("date").sort_values()
         n_side = min(top_k, len(g) // 2)
@@ -125,13 +124,17 @@ def walk_forward_fusion(X: pd.DataFrame, fwd: Forward, costs: CostModel,
         gross[d] = r_g
         net[d] = r_g - rt
         picks.append((d, list(longs), list(shorts)))
-    # z-score-sum linear baseline
+    # z-score-sum linear baseline -- WITHIN-DAY cross-sectional z-scores
+    # (no time-series moments, hence no look-ahead)
     fam_cols = [c for c in feat_cols if c.startswith("f_")]
+    fam_df = X[fam_cols]
+    day = X.index.get_level_values("date")
+    mu_d = fam_df.groupby(day).transform("mean")
+    sd_d = fam_df.groupby(day).transform("std")
     lin = pd.Series(
         np.where(active,
-                 np.nan_to_num(
-                     ((X[fam_cols] - X[fam_cols].mean()) /
-                      (X[fam_cols].std() + 1e-9)).sum(axis=1).values), np.nan),
+                 np.nan_to_num(((fam_df - mu_d) / (sd_d + 1e-9))
+                               .sum(axis=1).values), np.nan),
         index=X.index).dropna()
     lin_net = pd.Series(0.0, index=dates)
     for d, g in lin.groupby(level="date"):

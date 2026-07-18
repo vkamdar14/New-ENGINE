@@ -52,8 +52,11 @@ def per_signal_stats(sig_fwd: pd.DataFrame, costs: CostModel,
             row[f"abn_{h}"] = a.mean()
             if h == h0:
                 row["hit"] = float((a > 0).mean())
-                # HAC lag ~ horizon (overlapping event windows)
-                row["tstat"] = newey_west_t(a, lags=h0 + 1)
+                # cluster by calendar date (same-day signals share shocks),
+                # then Newey-West over the daily means with lag ~ horizon
+                daily = (g[["date", f"abn_{h}"]].dropna()
+                         .groupby("date")[f"abn_{h}"].mean().values)
+                row["tstat"] = newey_west_t(daily, lags=h0 + 1)
                 row["net_per_trade"] = a.mean() - rt
                 row["net_daily_equiv"] = (a.mean() - rt) / h0
         rows.append(row)

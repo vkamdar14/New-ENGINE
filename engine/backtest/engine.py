@@ -41,11 +41,17 @@ class Forward:
             self.cc = np.vstack([np.full((1, c.shape[1]), np.nan),
                                  c[1:] / c[:-1] - 1])
             self.oc = c / o - 1
-        self.mkt_cc = np.nanmean(self.cc, axis=1)
-        self.mkt_cc[0] = 0.0
+        with np.errstate(invalid="ignore"):
+            self.mkt_cc = np.where(
+                np.isnan(self.cc).all(axis=1), 0.0,
+                np.nanmean(self.cc, axis=1))
+            self.mkt_oc = np.where(
+                np.isnan(self.oc).all(axis=1), 0.0,
+                np.nanmean(self.oc, axis=1))
         cum = np.concatenate([[1.0], np.cumprod(1 + self.mkt_cc)])
         self.fwd_no, self.fwd_sc = {}, {}
-        self.mkt_h = {}
+        self.mkt_h = {}      # same-close benchmark: mkt close[t] -> close[t+h]
+        self.mkt_h_no = {}   # next-open benchmark: mkt open[t+1] -> close[t+h]
         for h in self.horizons:
             f_no = np.full_like(c, np.nan)
             f_sc = np.full_like(c, np.nan)
@@ -56,6 +62,12 @@ class Forward:
             m = np.full(T, np.nan)
             m[:T - h] = cum[1 + h:] / cum[1:T - h + 1] - 1     # days t+1..t+h
             self.mkt_h[h] = m
+            # next-open window excludes the t -> t+1 overnight market move:
+            # (1 + mkt_oc[t+1]) * prod(cc over t+2..t+h) - 1
+            m_no = np.full(T, np.nan)
+            m_no[:T - h] = ((1 + self.mkt_oc[1:T - h + 1])
+                            * (cum[1 + h:] / cum[2:T - h + 2]) - 1)
+            self.mkt_h_no[h] = m_no
 
     def locate(self, signals: pd.DataFrame):
         pos_d = {d: i for i, d in enumerate(self.dates)}
@@ -81,8 +93,9 @@ def attach_forward(signals: pd.DataFrame, fwd: Forward) -> pd.DataFrame:
     for h in fwd.horizons:
         raw = np.where(same_close, fwd.fwd_sc[h][ti, tj],
                        fwd.fwd_no[h][ti, tj])
+        mkt = np.where(same_close, fwd.mkt_h[h][ti], fwd.mkt_h_no[h][ti])
         s[f"ret_{h}"] = raw * d
-        s[f"abn_{h}"] = (raw - fwd.mkt_h[h][ti]) * d
+        s[f"abn_{h}"] = (raw - mkt) * d
     return s
 
 

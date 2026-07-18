@@ -43,11 +43,13 @@ def test_truncation_invariance(data, name):
     # small right edge (rolling min_periods effects only ever ADD signals at
     # the edge, never change interior ones)
     edge = cut_dates.sort_values()[-1]
-    key = ["date", "ticker", "signal", "direction"]
+    key = ["date", "ticker", "signal", "direction", "strength"]
     f = (full[full["date"] < edge].sort_values(key)[key]
          .reset_index(drop=True))
     p = (part[part["date"] < edge].sort_values(key)[key]
          .reset_index(drop=True))
+    f["strength"] = f["strength"].round(9)
+    p["strength"] = p["strength"].round(9)
     pd.testing.assert_frame_equal(f, p)
 
 
@@ -104,6 +106,58 @@ def test_attach_forward_direction_sign(data):
     out = attach_forward(sig, fwd)
     raw = fwd.fwd_no[1][50, 0]
     assert np.isclose(out["ret_1"].iloc[0], -raw)
+
+
+def test_fusion_walk_forward_no_lookahead(data):
+    """GBM scores for month m must be unchanged when later months' data are
+    deleted -- i.e., no future row influences a past prediction."""
+    from engine.backtest.engine import Forward
+    from engine.fusion.meta import build_features, walk_forward_fusion
+    from engine.patterns import ALL_DETECTORS
+    from engine.patterns.base import Wide
+    from engine.config import CostModel
+
+    panel = data["panel"]
+    sigs = pd.concat([ALL_DETECTORS[k](panel, None)
+                      for k in ("gaps", "trend", "anchors")],
+                     ignore_index=True)
+    w = Wide(panel)
+    fwd = Forward(w.open, w.close, (1, 2, 3, 5, 10, 20))
+    X = build_features(sigs, w)
+    full = walk_forward_fusion(X, fwd, CostModel(), top_k=3,
+                               min_train_days=40)["scores"]
+
+    dates = panel.index.get_level_values("date").unique().sort_values()
+    cut = dates[-45]
+    panel2 = panel[panel.index.get_level_values("date") < cut]
+    sigs2 = sigs[sigs["date"] < cut]
+    w2 = Wide(panel2)
+    fwd2 = Forward(w2.open, w2.close, (1, 2, 3, 5, 10, 20))
+    X2 = build_features(sigs2, w2)
+    part = walk_forward_fusion(X2, fwd2, CostModel(), top_k=3,
+                               min_train_days=40)["scores"]
+
+    # compare on months fully inside both runs, excluding the boundary month
+    last_full_month = (pd.Period(cut, freq="M") - 1)
+    keep = [d for d in part.index.get_level_values("date").unique()
+            if pd.Period(d, freq="M") < last_full_month]
+    a = full[full.index.get_level_values("date").isin(keep)]
+    b = part[part.index.get_level_values("date").isin(keep)]
+    common = a.index.intersection(b.index)
+    assert len(common) > 100
+    assert np.allclose(a.loc[common].values, b.loc[common].values,
+                       atol=1e-10), "fusion scores changed when future removed"
+
+
+def test_ml_signals_only_out_of_sample(data):
+    """ML signals must all be dated after the train split point."""
+    from engine.patterns.ml_cnn import detect_ml, TRAIN_FRAC
+    panel = data["panel"]
+    s = detect_ml(panel, max_train=4000, grid_step=15, use_torch=False)
+    dates = panel.index.get_level_values("date").unique().sort_values()
+    split_date = dates[int(len(dates) * TRAIN_FRAC)]
+    assert len(s) > 0
+    assert pd.to_datetime(s["date"]).min() >= split_date
 
 
 def test_simulator_gap_independence(data):

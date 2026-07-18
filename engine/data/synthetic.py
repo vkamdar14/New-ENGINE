@@ -131,10 +131,19 @@ def simulate(cfg: SimConfig, calib: dict | None = None) -> dict:
     on_sh = max(0.18, on_share)
     fade_carry = np.zeros(N)
 
+    vmean = 0.5 * (cfg.news_vol_mult_lo + cfg.news_vol_mult_hi)
     for t in range(T):
+        # --- pop today's scheduled PEAD BEFORE scheduling new events, so an
+        # event's drift runs over days t+1..t+pead_days (never the event
+        # day itself -- the jump already models the announcement move) ---
+        pead_today = pead_queue[0].copy()
+        pead_queue[:-1] = pead_queue[1:]
+        pead_queue[-1] = 0.0
+
         # --- events ---
         ev = rng.random(N) < cfg.catalyst_rate
         jump = np.zeros(N)
+        vmult = np.ones(N)
         if ev.any():
             k = int(ev.sum())
             mag = np.exp(rng.normal(cfg.jump_mu_ln, cfg.jump_sigma_ln, k))
@@ -142,13 +151,14 @@ def simulate(cfg: SimConfig, calib: dict | None = None) -> dict:
             jump[ev] = sgn * mag
             catalyst[t, ev] = 1
             news_sign[t, ev] = np.sign(jump[ev]).astype(np.int8)
-            # schedule PEAD drift over next pead_days
+            vmult[ev] = rng.uniform(cfg.news_vol_mult_lo,
+                                    cfg.news_vol_mult_hi, k)
+            # schedule PEAD drift over days t+1..t+pead_days; high-attention
+            # (high volume-multiple) events drift proportionally more
             add = cfg.pead_share * jump[ev] / cfg.pead_days
+            if cfg.pead_vol_scaling:
+                add = add * (vmult[ev] / vmean)
             pead_queue[:, ev] += add
-
-        pead_today = pead_queue[0].copy()
-        pead_queue[:-1] = pead_queue[1:]
-        pead_queue[-1] = 0.0
 
         # --- alpha OU update ---
         alpha_state = phi * alpha_state + rng.normal(0, ou_innov_sd, N)
@@ -168,13 +178,15 @@ def simulate(cfg: SimConfig, calib: dict | None = None) -> dict:
         # news hits overnight 80% of the time
         overnight_jump = np.where(rng.random(N) < 0.8, jump, 0.0)
         intraday_jump = jump - overnight_jump
-        r_on = z_on + overnight_jump
+        # persistent drifts accrue partly overnight (conservative: a
+        # next-open entrant does NOT capture that part on entry day)
+        r_on = z_on + overnight_jump + cfg.drift_on_share * drift
         # no-news gap fade: a fraction of today's overnight NOISE reverts in
         # the NEXT session (tradable at tomorrow's open) via fade_carry
         nonews = (catalyst[t] == 0)
         fade = np.where(nonews, cfg.nonews_gap_fade * z_on, 0.0)
-        r_id = (beta_i * f_mkt[t] + sec + z_id + intraday_jump + drift
-                + fade_carry)
+        r_id = (beta_i * f_mkt[t] + sec + z_id + intraday_jump
+                + (1 - cfg.drift_on_share) * drift + fade_carry)
         tr_fade[t] = fade_carry
         fade_carry = fade
 
@@ -193,21 +205,22 @@ def simulate(cfg: SimConfig, calib: dict | None = None) -> dict:
         u = rng.beta(2.0, 2.0, N)
         hi = np.maximum(o, c) * np.exp(span * u * 0.5)
         lo = np.minimum(o, c) * np.exp(-span * (1 - u) * 0.5)
-        # first-30-min range for ORB (fraction of day range, front-loaded vol)
-        f30 = rng.beta(2.5, 4.0, N) * 0.55 + 0.10
-        or30_hi[t] = o * np.exp(np.log(hi / o) * f30)
-        or30_lo[t] = o * np.exp(np.log(lo / o) * f30)
+        # first-30-min range for ORB: an INDEPENDENT early-session draw
+        # (~8% of intraday variance), only bounded by the day's extremes --
+        # not a deterministic contraction of the final range
+        sd30 = sigma_i * np.sqrt((1 - on_sh) * 0.077)
+        or_hi_raw = o * np.exp(np.abs(rng.normal(0, 1, N)) * sd30)
+        or_lo_raw = o * np.exp(-np.abs(rng.normal(0, 1, N)) * sd30)
+        or30_hi[t] = np.minimum(or_hi_raw, hi)
+        or30_lo[t] = np.maximum(or_lo_raw, lo)
 
         # --- volume ---
+        # event-day level uses the event's own multiplier ONCE; the echo into
+        # following days goes through lv_state AFTER today's level is set
         lv_state = 0.6 * lv_state + rng.normal(0, 0.35, N)
-        rvol_news = np.where(
-            catalyst[t] == 1,
-            np.log(rng.uniform(cfg.news_vol_mult_lo, cfg.news_vol_mult_hi, N)),
-            0.0,
-        )
-        # events echo: elevated volume decays over 2 days handled by lv_state bump
-        lv_state += rvol_news * 0.4
+        rvol_news = np.where(catalyst[t] == 1, np.log(vmult), 0.0)
         vol = np.exp(base_lv + lv_state + vol_beta * np.abs(r_tot) + rvol_news)
+        lv_state += rvol_news * 0.4
 
         open_[t], high[t], low[t], close[t] = o, hi, lo, c
         volume[t] = vol

@@ -44,12 +44,20 @@ def fetch_stooq_daily(ticker: str, start: str, end: str,
     return df[["open", "high", "low", "close", "volume"]]
 
 
-def fetch_yahoo_daily(tickers: list[str], start: str, end: str) -> pd.DataFrame:
-    """Daily OHLCV via yfinance for a list of tickers -> (date,ticker) panel."""
+def fetch_yahoo_daily(tickers: list[str], start: str, end: str,
+                      auto_adjust: bool = False) -> pd.DataFrame:
+    """Daily OHLCV via yfinance for a list of tickers -> (date,ticker) panel.
+
+    NOTE: auto_adjust defaults to False because level-dependent detectors
+    (round numbers, gap sizes vs actual traded prices, $-grids) need TRADED
+    prices; back-adjusted series distort historical levels.  Handle splits/
+    dividends explicitly downstream if you enable it.
+    """
     try:
         import yfinance as yf
         raw = yf.download(tickers, start=start, end=end, group_by="ticker",
-                          auto_adjust=True, threads=True, progress=False)
+                          auto_adjust=auto_adjust, threads=True,
+                          progress=False)
     except Exception as e:  # noqa: BLE001
         raise DataSourceBlocked(f"yahoo fetch failed: {e}") from e
     frames = {}

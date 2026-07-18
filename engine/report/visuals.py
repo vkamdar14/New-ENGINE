@@ -83,7 +83,7 @@ def bootstrap_hist(draws: np.ndarray, achieved: float, target: float,
                 fontsize=9, ha="left", xytext=(6, 0), textcoords="offset points")
     ax.axvline(target * 1e4, color=CRIT, lw=2)
     ax.annotate(f"TARGET {target * 1e4:.0f} bp/day (1%)",
-                (target * 1e4, ax.get_ylim()[1] * 0.78), color=CRIT,
+                (target * 1e4, ax.get_ylim()[1] * 0.45), color=CRIT,
                 fontweight="bold", fontsize=10, ha="right", rotation=90,
                 xytext=(-8, 0), textcoords="offset points")
     ax.set_xlabel("Average daily net return per bootstrap draw (basis points)")
@@ -105,6 +105,9 @@ def attribution_bars(family_daily: dict[str, pd.Series], outdir: str):
     colors = [UP if v > 0 else DN for v in df["bps_all"]]
     ax.barh(df["family"], df["bps_all"], color=colors, height=0.62)
     ax.axvline(0, color="#c3c2b7", lw=1)
+    lo, hi = df["bps_all"].min(), df["bps_all"].max()
+    span = max(hi - lo, 1.0)
+    ax.set_xlim(lo - 0.35 * span, hi + 0.35 * span)
     for i, (v, n) in enumerate(zip(df["bps_all"], df["active_days"])):
         ax.annotate(f" {v:+.1f} bp  (n={n})", (v, i), va="center", fontsize=8.5,
                     ha="left" if v >= 0 else "right", color=INK,

@@ -38,7 +38,7 @@ def scores_walk_forward(X, fwd, seed=3, min_train_days=320):
     di = X.index.get_level_values("date").map(pos_d).values
     tj_map = {t: j for j, t in enumerate(fwd.tickers)}
     tj = X.index.get_level_values("ticker").map(tj_map).values
-    y = fwd.fwd_no[1][di, tj] - fwd.mkt_h[1][di]
+    y = fwd.fwd_no[1][di, tj] - fwd.mkt_h_no[1][di]
     Xv = X.values.astype(np.float64)
     Xv[~np.isfinite(Xv)] = 0.0
     ok = np.isfinite(y)
