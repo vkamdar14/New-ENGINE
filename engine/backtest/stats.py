@@ -27,6 +27,12 @@ def newey_west_t(x: np.ndarray, lags: int | None = None) -> float:
     return float(x.mean() / se)
 
 
+def snap_h(h: int, horizons=(1, 2, 3, 5, 10, 20)) -> int:
+    """Nearest tested horizon to a signal's stamped holding period."""
+    hs = np.asarray(horizons)
+    return int(hs[np.argmin(np.abs(hs - h))])
+
+
 def per_signal_stats(sig_fwd: pd.DataFrame, costs: CostModel,
                      horizons=(1, 2, 3, 5, 10, 20)) -> pd.DataFrame:
     """Event-study table: one row per (family, signal)."""
@@ -35,7 +41,7 @@ def per_signal_stats(sig_fwd: pd.DataFrame, costs: CostModel,
     for (fam, name), g in sig_fwd.groupby(["family", "signal"]):
         row = {"family": fam, "signal": name, "n": len(g),
                "direction": int(g["direction"].mode().iloc[0])}
-        h0 = int(g["horizon"].mode().iloc[0])
+        h0 = snap_h(int(g["horizon"].mode().iloc[0]), horizons)
         row["horizon"] = h0
         for h in horizons:
             a = g[f"abn_{h}"].values
@@ -62,7 +68,7 @@ def decay_by_year(sig_fwd: pd.DataFrame) -> pd.DataFrame:
     g["year"] = pd.to_datetime(g["date"]).dt.year
 
     def own_abn(r):
-        return r[f"abn_{int(r['horizon'])}"]
+        return r[f"abn_{snap_h(int(r['horizon']))}"]
 
     g["abn_own"] = g.apply(own_abn, axis=1)
     out = (g.pivot_table(index=["family", "signal"], columns="year",

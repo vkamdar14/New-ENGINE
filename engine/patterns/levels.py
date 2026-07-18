@@ -106,7 +106,7 @@ def detect(panel: pd.DataFrame, ctx: dict | None = None) -> pd.DataFrame:
         above_ma = c > ma
         # bounce: touched MA intraday from above, closed back above
         bounce = above_ma & (l <= ma) & (c.shift(1) > ma.shift(1))
-        lose = (~above_ma) & above_ma.shift(1).fillna(False)
+        lose = (~above_ma) & above_ma.shift(1, fill_value=False)
         frames += [
             pack(w.index, w.mask_to_index(bounce.fillna(False)).values,
                  "levels", f"ma{n}_bounce", 1,

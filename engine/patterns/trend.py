@@ -26,8 +26,8 @@ def detect(panel: pd.DataFrame, ctx: dict | None = None) -> pd.DataFrame:
         mf = c.rolling(fast, min_periods=fast).mean()
         ms = c.rolling(slow, min_periods=slow).mean()
         above = mf > ms
-        gold = above & ~above.shift(1).fillna(False)
-        death = ~above & above.shift(1).fillna(True)
+        gold = above & ~above.shift(1, fill_value=False)
+        death = ~above & above.shift(1, fill_value=True)
         spread = ((mf - ms) / ms).abs()
         frames += [
             pack(w.index, w.mask_to_index(gold.fillna(False)).values, "trend",

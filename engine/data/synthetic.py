@@ -124,6 +124,13 @@ def simulate(cfg: SimConfig, calib: dict | None = None) -> dict:
     # top-vs-bottom decile spread ~= 0.9 * quality_premium per day
     q_drift = cfg.quality_premium * (q_rank - 0.5)
 
+    # Overnight variance share: the index calibration understates single-stock
+    # overnight risk (index opens are stale prints -> measured share ~2%).
+    # Single names empirically carry ~20-35% of daily variance overnight
+    # (Lou-Polk-Skouras 2019); floor the share at 18%.
+    on_sh = max(0.18, on_share)
+    fade_carry = np.zeros(N)
+
     for t in range(T):
         # --- events ---
         ev = rng.random(N) < cfg.catalyst_rate
@@ -150,28 +157,24 @@ def simulate(cfg: SimConfig, calib: dict | None = None) -> dict:
         anchor = np.where(np.exp(log_p - hist_max) > (1 - cfg.anchor_band),
                           cfg.anchor_drift, 0.0)
 
-        # --- idiosyncratic return, split overnight/intraday ---
-        z = _student_t(rng, dof, N) * sigma_i
+        # --- returns: INDEPENDENT overnight and intraday components ---
+        # (the factor return is ~fully intraday, matching the tiny overnight
+        #  variance share measured on the real index; idiosyncratic risk is
+        #  split on_sh overnight / (1-on_sh) intraday with independent draws)
         sec = f_sec[sector_of, t] * gamma_i
         drift = alpha_state + anchor + q_drift + pead_today
-        r_core = beta_i * f_mkt[t] + sec + z
-
-        r_on_noise = np.sqrt(on_share) * r_core * rng.normal(1.0, 0.35, N)
-        # overnight = share of core + full jump (news hits overnight 80% of time)
+        z_on = _student_t(rng, dof, N) * sigma_i * np.sqrt(on_sh)
+        z_id = _student_t(rng, dof, N) * sigma_i * np.sqrt(1 - on_sh)
+        # news hits overnight 80% of the time
         overnight_jump = np.where(rng.random(N) < 0.8, jump, 0.0)
         intraday_jump = jump - overnight_jump
-        r_on = r_on_noise + overnight_jump
-        # no-news gap fade: fade a fraction of yesterday-informed overnight noise
+        r_on = z_on + overnight_jump
+        # no-news gap fade: a fraction of today's overnight NOISE reverts in
+        # the NEXT session (tradable at tomorrow's open) via fade_carry
         nonews = (catalyst[t] == 0)
-        fade = np.where(nonews, cfg.nonews_gap_fade * r_on_noise, 0.0)
-        # fade materializes intraday TODAY? No: fade of today's gap must hit the
-        # NEXT session to be tradable at the open.  Schedule it.
-        r_id = (r_core - r_on_noise) + intraday_jump + drift
-        if t + 1 < T:
-            pass  # applied via fade_carry below
-        if t == 0:
-            fade_carry = np.zeros(N)
-        r_id = r_id + fade_carry            # yesterday's scheduled fade lands today
+        fade = np.where(nonews, cfg.nonews_gap_fade * z_on, 0.0)
+        r_id = (beta_i * f_mkt[t] + sec + z_id + intraday_jump + drift
+                + fade_carry)
         tr_fade[t] = fade_carry
         fade_carry = fade
 

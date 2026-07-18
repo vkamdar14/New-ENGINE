@@ -36,7 +36,7 @@ def detect(panel: pd.DataFrame, ctx: dict | None = None) -> pd.DataFrame:
 
     hi20 = c.rolling(20, min_periods=20).max().shift(1)
     brk = (c > hi20)
-    fresh = brk & ~brk.shift(1).fillna(False)
+    fresh = brk & ~brk.shift(1, fill_value=False)
     q_brk = fresh & (qrank >= 0.8)
 
     frames = [

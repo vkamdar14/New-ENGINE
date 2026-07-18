@@ -94,8 +94,7 @@ def detect(panel: pd.DataFrame, ctx: dict | None = None) -> pd.DataFrame:
     anchor_px = c.where(cat)
     anchor_wt = w.rvol.where(cat)
     lam = 0.5 ** (1 / 63)
-    num = pd.DataFrame(0.0, index=c.index, columns=c.columns)
-    den = pd.DataFrame(0.0, index=c.index, columns=c.columns)
+    num_a = np.zeros(c.shape); den_a = np.zeros(c.shape)
     num_s = np.zeros(c.shape[1]); den_s = np.zeros(c.shape[1])
     ap, aw = anchor_px.values, anchor_wt.values
     for t in range(c.shape[0]):
@@ -104,9 +103,11 @@ def detect(panel: pd.DataFrame, ctx: dict | None = None) -> pd.DataFrame:
         wgt = np.where(newa, np.nan_to_num(aw[t], nan=1.0), 0.0)
         num_s = num_s + wgt * np.nan_to_num(ap[t])
         den_s = den_s + wgt
-        num.values[t] = num_s
-        den.values[t] = den_s
-    anchor = (num / den.replace(0, np.nan))
+        num_a[t] = num_s
+        den_a[t] = den_s
+    den = pd.DataFrame(den_a, index=c.index, columns=c.columns)
+    anchor = pd.DataFrame(num_a, index=c.index, columns=c.columns) / \
+        den.replace(0, np.nan)
     amo = (c - anchor) / atr
     reclaim = (amo > 0) & (amo.shift(1) <= 0) & (den > 0.5)
     stretch = (amo > 4) & (den > 0.5)
@@ -155,7 +156,7 @@ def detect(panel: pd.DataFrame, ctx: dict | None = None) -> pd.DataFrame:
         return (day_close - pc0) * esign >= half_gap * esign
 
     echo = (_ret(c.shift(2)) & _ret(c.shift(1)) & _ret(c)
-            & big_news_gap.shift(2).fillna(False))
+            & big_news_gap.shift(2, fill_value=False))
     m = echo & (esign != 0)
     frames.append(pack(w.index, w.mask_to_index(m.fillna(False)).values, "novel",
                        "gap_echo_continuation",

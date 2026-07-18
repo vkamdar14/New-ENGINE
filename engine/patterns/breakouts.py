@@ -44,8 +44,8 @@ def detect(panel: pd.DataFrame, ctx: dict | None = None) -> pd.DataFrame:
         lo_n = c.rolling(n, min_periods=n).min().shift(1)
         up = c > hi_n
         dn = c < lo_n
-        fresh_up = up & ~up.shift(1).fillna(False)
-        fresh_dn = dn & ~dn.shift(1).fillna(False)
+        fresh_up = up & ~up.shift(1, fill_value=False)
+        fresh_dn = dn & ~dn.shift(1, fill_value=False)
         stretch = ((c - hi_n) / w.atr)
         for m, name, d, s in ((fresh_up, f"donchian{n}_up", 1, stretch),
                               (fresh_dn, f"donchian{n}_dn", -1,

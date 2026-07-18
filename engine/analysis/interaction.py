@@ -70,8 +70,8 @@ def breakout_interaction_table(panel: pd.DataFrame) -> pd.DataFrame:
     c = w.close
     hi20 = c.rolling(20, min_periods=20).max().shift(1)
     lo20 = c.rolling(20, min_periods=20).min().shift(1)
-    up = (c > hi20) & ~(c > hi20).shift(1).fillna(False)
-    dn = (c < lo20) & ~(c < lo20).shift(1).fillna(False)
+    up = (c > hi20) & ~(c > hi20).shift(1, fill_value=False)
+    dn = (c < lo20) & ~(c < lo20).shift(1, fill_value=False)
     sign = pd.DataFrame(np.where(up, 1.0, np.where(dn, -1.0, np.nan)),
                         index=c.index, columns=c.columns)
     news2 = (w.catalyst.rolling(2, min_periods=1).max() > 0)  # news today or yday
