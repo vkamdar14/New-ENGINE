@@ -43,6 +43,14 @@ def main(argv=None):
                     help="load cached ML signals from outdir if present")
     ap.add_argument("--outdir", default="results")
     ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--tickers-file", default="tickers.txt",
+                    help="whitespace-separated tickers (real source only)")
+    ap.add_argument("--start", default="2020-01-01",
+                    help="real-data fetch start (>=18mo before the 5y test "
+                         "window so 52wk/momentum features warm up)")
+    ap.add_argument("--end", default="2026-07-17")
+    ap.add_argument("--no-news", action="store_true",
+                    help="skip GDELT catalyst flags on the real path")
     args = ap.parse_args(argv)
 
     cfg = RunConfig()
@@ -63,9 +71,15 @@ def main(argv=None):
         data = simulate(cfg.sim, calib)
     else:
         from .data.loaders import load_real_panel
-        tickers = open("tickers.txt").read().split()
-        data = load_real_panel(tickers, "2021-07-01", "2026-07-17")
+        tickers = open(args.tickers_file).read().split()
+        log(f"fetching real data for {len(tickers)} tickers "
+            f"{args.start}..{args.end} ...")
+        data = load_real_panel(tickers, args.start, args.end,
+                               with_news=not args.no_news)
         calib = None
+        log("NOTE: ticker list is today's constituents -> survivorship bias; "
+            "fundamentals/ORB/news-tone families are empty on the free "
+            "real path (see loaders.py)")
     panel, truth = data["panel"], data["truth"]
     w = Wide(panel)
     fwd = Forward(w.open, w.close, cfg.horizons)
@@ -92,7 +106,7 @@ def main(argv=None):
             log(f"detector {'ml':>13s}: {len(s):7,} signals "
                 f"({time.time() - t0:5.1f}s)")
         all_sigs.append(s)
-    signals = pd.concat(all_sigs, ignore_index=True)
+    signals = pd.concat([s for s in all_sigs if len(s)], ignore_index=True)
     signals["date"] = pd.to_datetime(signals["date"])
     signals.to_pickle(f"{cfg.outdir}/signals.pkl")
 

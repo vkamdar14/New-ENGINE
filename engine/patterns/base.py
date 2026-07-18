@@ -29,7 +29,17 @@ COLUMNS = ["date", "ticker", "family", "signal", "direction", "strength", "horiz
 
 
 def empty() -> pd.DataFrame:
-    return pd.DataFrame(columns=COLUMNS)
+    """Zero-row signal frame with CORRECT dtypes -- concatenating an
+    all-object empty frame silently upcasts numeric columns to object."""
+    return pd.DataFrame({
+        "date": pd.Series(dtype="datetime64[ns]"),
+        "ticker": pd.Series(dtype=str),
+        "family": pd.Series(dtype=str),
+        "signal": pd.Series(dtype=str),
+        "direction": pd.Series(dtype=np.int64),
+        "strength": pd.Series(dtype=float),
+        "horizon": pd.Series(dtype=np.int64),
+    })
 
 
 def pack(index: pd.MultiIndex, mask: pd.Series | np.ndarray, family: str,

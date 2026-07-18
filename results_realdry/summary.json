@@ -1,0 +1,82 @@
+{
+  "source": "real",
+  "calibration": null,
+  "n_signals_test": 33254,
+  "families": {
+    "anchors": {
+      "avg_daily_bps": -1.770492218411806,
+      "ann_sharpe": -0.2616037400441531,
+      "active_days": 1304
+    },
+    "breakouts": {
+      "avg_daily_bps": -0.6736010823425457,
+      "ann_sharpe": -0.12660425117816973,
+      "active_days": 1302
+    },
+    "candles": {
+      "avg_daily_bps": -6.799303645172793,
+      "ann_sharpe": -0.8751095745057001,
+      "active_days": 1077
+    },
+    "gaps": {
+      "avg_daily_bps": -7.777637222223057,
+      "ann_sharpe": -2.2209771207672926,
+      "active_days": 1304
+    },
+    "levels": {
+      "avg_daily_bps": -4.124604321503618,
+      "ann_sharpe": -1.4103125271601527,
+      "active_days": 1304
+    },
+    "lmw": {
+      "avg_daily_bps": 2.5098356891497424,
+      "ann_sharpe": 0.2951230714419455,
+      "active_days": 789
+    },
+    "novel": {
+      "avg_daily_bps": -4.991453108525242,
+      "ann_sharpe": -0.7930100251010321,
+      "active_days": 543
+    },
+    "trend": {
+      "avg_daily_bps": 1.5801104850007022,
+      "ann_sharpe": 0.3898826145844495,
+      "active_days": 1304
+    },
+    "volume": {
+      "avg_daily_bps": -2.0919568447748986,
+      "ann_sharpe": -0.38282196514416833,
+      "active_days": 1301
+    }
+  },
+  "fused": {
+    "avg_daily_net_bps": -15.07347383419162,
+    "avg_daily_gross_bps": -0.08496808706518555,
+    "ann_sharpe_net": -11.373454619393856,
+    "nw_tstat": -25.594839040526512,
+    "linear_baseline_bps": -14.899326110827808,
+    "target_daily_bps": 100.0,
+    "target_hit": false,
+    "p_draws_above_target": 0.0,
+    "bootstrap_p5_bps": -16.016470032207405,
+    "bootstrap_p95_bps": -14.267414341228136
+  },
+  "importances": {
+    "rvol": 0.0023284907955422782,
+    "mom121": 0.0018777376831768573,
+    "gap": 0.0014150270770487323,
+    "f_trend": 0.000838014014553005,
+    "f_gaps": 0.0008258302112386836,
+    "prox52": 0.000602872743520629,
+    "f_levels": 0.00039559898735130883,
+    "vol20": 0.00037198283736091425,
+    "f_volume": 0.00019261060940112262,
+    "f_novel": 0.00016071787451943376,
+    "f_breakouts": 7.008749162673578e-05,
+    "f_anchors": 5.425732908411381e-05,
+    "n_active": 3.209745374288531e-05,
+    "f_lmw": 0.0,
+    "f_candles": 0.0
+  },
+  "sample_trade_charts": 8
+}
