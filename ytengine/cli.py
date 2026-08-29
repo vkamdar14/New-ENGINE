@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 
 from . import __version__, report
 from .audit import audit_channel
+from .check import check_key, render as render_check
 from .client import QuotaExceeded, YouTubeClient
 from .clips import find_clips, mentions_from_comments, render_clips
 from .fixtures import make_corpus
@@ -190,6 +191,13 @@ def cmd_clips(args, client):
     return 0
 
 
+def cmd_check(args, client):
+    """Verify the API key end to end before committing to a long run."""
+    import os
+    print(render_check(check_key(os.environ.get("YOUTUBE_API_KEY"))))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="ytengine", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -228,6 +236,10 @@ def build_parser() -> argparse.ArgumentParser:
     sp = sub.add_parser("audit", help="keep/kill verdict per format")
     common(sp)
     sp.set_defaults(fn=cmd_audit)
+
+    sp = sub.add_parser("check", help="verify YOUTUBE_API_KEY works, and say what it unlocks")
+    common(sp, needs_corpus=False)
+    sp.set_defaults(fn=cmd_check)
 
     sp = sub.add_parser("clips", help="find clippable moments via comment timestamps")
     common(sp)
@@ -270,9 +282,9 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
-    if getattr(args, "offline", False) and args.cmd not in ("harvest", "clips"):
+    if getattr(args, "offline", False) and args.cmd not in ("harvest", "clips", "check"):
         print(OFFLINE_BANNER)
-    elif args.cmd not in ("harvest", "clips") and hasattr(args, "niche") \
+    elif args.cmd not in ("harvest", "clips", "check") and hasattr(args, "niche") \
             and not (args.niche or args.channel):
         print("error: need --niche or --channel (or --offline to try it out)", file=sys.stderr)
         return 2

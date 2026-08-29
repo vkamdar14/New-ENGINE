@@ -30,6 +30,51 @@ cannot copy - and leaves format and packaging, which are the variables you can.
 | `harvest` | Build a large Shorts corpus, resumably, across as many days as it takes. |
 | `clips` | Which moments in a long video are worth cutting into Shorts? |
 
+## Getting an API key
+
+Free, no billing, about three minutes. The YouTube Data API has no paid tier -
+you get 10,000 quota units/day per project and cannot buy more with a card.
+
+1. Go to **console.cloud.google.com** and sign in with any Google account.
+2. Create a project (top-left project dropdown -> New Project). Any name.
+3. **APIs & Services -> Library**, search **YouTube Data API v3**, click **Enable**.
+4. **APIs & Services -> Credentials -> Create credentials -> API key**. Copy it.
+5. Restrict it: click the key, set **API restrictions** to *YouTube Data API v3*.
+   Leave **Application restrictions** on **None** - the "HTTP referrers" option
+   makes the key work in a browser and fail from every script, with an error
+   that never says so.
+
+```bash
+export YOUTUBE_API_KEY=AIza...
+python -m ytengine check
+```
+
+`check` spends 1 unit proving the whole path works, and tells apart the four
+failures that all look like a bare 403: key absent, API not enabled on the
+project, key invalid, key restricted, quota exhausted. Each needs a different
+fix and guessing wrong costs an afternoon.
+
+### What a key does and does not reach
+
+| Data | Source | Needs |
+|---|---|---|
+| views, likes, comments, duration, titles, tags | Data API v3 | API key |
+| comment text and timestamps | Data API v3 | API key |
+| **CTR, retention, impressions, traffic sources** | **Analytics API** | **OAuth, own channel only** |
+
+That second row is the one to plan around: click-through rate and retention are
+never available for other people's videos, at any price. Every competitor-facing
+number in this engine is derived from public counts, and the reports label the
+engagement-rate proxy as a proxy rather than passing it off as CTR.
+
+### If 10,000 units/day is not enough
+
+It probably is - `harvest --estimate` puts 30k Shorts at ~1,500 units. If you
+genuinely outgrow it, the legitimate route is the **YouTube API Services quota
+extension** form, which requires an audit of your application. Spinning up
+extra Google Cloud projects to multiply quota is a Terms of Service violation
+and gets keys revoked; it is not a scaling strategy.
+
 ## Quickstart
 
 No API key needed to try it - every command takes `--offline` and runs the
@@ -234,7 +279,7 @@ sample and falls back to a conservative default instead.
 python -m unittest discover -s tests -v
 ```
 
-105 tests. The load-bearing ones are not the arithmetic checks - they are the
+116 tests. The load-bearing ones are not the arithmetic checks - they are the
 pair that plant a known effect in synthetic data and assert the engine
 recovers it, *and* plant nothing and assert it stays quiet. A pattern finder
 that always finds a pattern is a random number generator with a table.
