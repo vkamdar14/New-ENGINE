@@ -123,10 +123,15 @@ class Harvester:
     videos come from, because it is 50x cheaper per video.
     """
 
-    def __init__(self, client: YouTubeClient, store: CorpusStore, shorts_only: bool = True):
+    def __init__(self, client: YouTubeClient, store: CorpusStore,
+                 shorts_only: bool = True, discovery_order: str = "date"):
         self.client = client
         self.store = store
         self.shorts_only = shorts_only
+        # "date" keeps the corpus representative. See YouTubeClient.search_video_ids -
+        # ordering discovery by viewCount builds a corpus containing no failures,
+        # which is the fastest way to train a model that cannot predict anything.
+        self.discovery_order = discovery_order
 
     def _quota_left(self) -> int:
         return self.client.quota_budget - self.client.quota_used
@@ -155,6 +160,7 @@ class Harvester:
                     query, limit=plan.per_slice, region=region,
                     published_after=after, published_before=before,
                     video_duration="short" if self.shorts_only else None,
+                    order=self.discovery_order,
                 )
             except QuotaExceeded:
                 report.stopped_because = "quota exhausted during discovery"

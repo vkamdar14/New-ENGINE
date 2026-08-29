@@ -34,6 +34,7 @@ class FakeClient:
         self.n_channels = n_channels
         self.per_channel = per_channel
         self.calls = {"search": 0, "uploads": 0, "channels": 0, "videos": 0}
+        self.orders = []
 
     def _charge(self, units):
         if self.quota_used + units > self.quota_budget:
@@ -48,9 +49,10 @@ class FakeClient:
         )
 
     def search_video_ids(self, query, limit=50, region=None, published_after=None,
-                         published_before=None, video_duration=None):
+                         published_before=None, video_duration=None, order="date"):
         self._charge(100)
         self.calls["search"] += 1
+        self.orders.append(order)
         if query in self.fail_on:
             raise QuotaExceeded("fake")
         # Channels are derived from the slice itself, not the call index, so
@@ -300,7 +302,7 @@ class TestMultiDay(TempStore):
                 self._n = 0
 
             def search_video_ids(self, query, limit=50, region=None, published_after=None,
-                                 published_before=None, video_duration=None):
+                                 published_before=None, video_duration=None, order="date"):
                 self._charge(100)
                 self.calls["search"] += 1
                 self._n += 1
@@ -331,3 +333,32 @@ class TestMultiDay(TempStore):
         r = Harvester(c, self.store).run(
             HarvestPlan(seeds=["a"], regions=["US"], windows=1), target=10**9, now=NOW)
         self.assertNotEqual(r.stopped_because, "target reached")
+
+
+class TestSamplingBias(TempStore):
+    """Regression guard for the worst bug this project has had.
+
+    Discovery originally ordered search results by viewCount. That returns only
+    the top videos, which only ever surfaces mega-channels, which produces a
+    corpus with no failures in it - a real 12,134-video harvest came back with
+    median views of 4.6 MILLION and a 5th percentile of 181k. Not one flop.
+
+    A classifier trained on that learns "everything goes viral", scores
+    beautifully on its own held-out split, and cannot predict anything. The
+    sampling decides whether the model means anything, so it is pinned here.
+    """
+
+    def test_discovery_never_orders_by_view_count(self):
+        c = FakeClient()
+        Harvester(c, self.store).run(
+            HarvestPlan(seeds=["a"], regions=["US"], windows=4), target=200, now=NOW)
+        self.assertTrue(c.orders, "discovery never ran")
+        self.assertNotIn("viewCount", c.orders,
+                         "ordering discovery by viewCount rebuilds the survivorship bias")
+
+    def test_default_discovery_order_is_date(self):
+        # Date is uncorrelated with outcome; relevance and viewCount are not.
+        c = FakeClient()
+        Harvester(c, self.store).run(
+            HarvestPlan(seeds=["a"], regions=["US"], windows=2), target=100, now=NOW)
+        self.assertEqual(set(c.orders), {"date"})

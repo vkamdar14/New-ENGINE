@@ -210,6 +210,7 @@ class YouTubeClient:
         published_after: str | None = None,
         published_before: str | None = None,
         video_duration: str | None = None,
+        order: str = "date",
     ) -> list[str]:
         """Search for video ids. The expensive call - 100 units per 50 results.
 
@@ -222,6 +223,14 @@ class YouTubeClient:
         `video_duration="short"` asks YouTube for sub-4-minute videos, which
         is the closest server-side filter to Shorts; the real <=180s test still
         happens client-side after hydration.
+
+        `order` defaults to "date" and that default is load-bearing. Ordering by
+        "viewCount" returns only the top videos, which only ever surfaces
+        mega-channels, which yields a corpus with no failures in it - median
+        views in the millions and not one flop. A model trained on that learns
+        "everything goes viral", scores brilliantly on its own test set, and is
+        worthless. Sampling by date is uncorrelated with outcome, so the corpus
+        keeps the flops that make the successes mean something.
         """
         params = {
             "part": "snippet",
@@ -231,7 +240,7 @@ class YouTubeClient:
             "publishedAfter": published_after,
             "publishedBefore": published_before,
             "videoDuration": video_duration,
-            "order": "viewCount",
+            "order": order,
         }
         out, seen = [], set()
         for it in self._paginate("search", params, cap=limit):

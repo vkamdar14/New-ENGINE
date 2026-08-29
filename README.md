@@ -29,6 +29,7 @@ cannot copy - and leaves format and packaging, which are the variables you can.
 | `trends` | Which topics are still accelerating, so I publish into a rising curve? |
 | `harvest` | Build a large Shorts corpus, resumably, across as many days as it takes. |
 | `clips` | Which moments in a long video are worth cutting into Shorts? |
+| `backtest` | Predict a video's view bucket before publishing, then score it against reality. |
 
 ## Getting an API key
 
@@ -110,6 +111,71 @@ python -m ytengine trends --db yt.db --topics "espresso,grinder,latte"
 
 Python 3.11+. No dependencies. Pillow is optional and only enables
 thumbnail checks.
+
+## Backtest: does any of this actually predict anything?
+
+```bash
+python -m ytengine backtest --corpus corpus.db
+python -m ytengine backtest --corpus corpus.db --no-channel-prior   # ablation
+```
+
+Everything else in this repo describes the past. This makes a falsifiable
+forward claim and scores it. Buckets are absolute, because for a channel
+starting from zero the question is "did it break out", not "did it beat my own
+median": FLOP <5k, JAIL 5k-25k, OK 25k-75k, GOOD 75k-250k, VIRAL 250k+.
+
+Three rules keep the score meaningful. Break any one and the number goes *up*
+while the model gets worse - which is why they are pinned by tests:
+
+1. **Pre-publication features only.** Views, likes and comments are outcomes.
+   Using them predicts views from views: a perfect score and no use at all.
+2. **Temporal split, never random.** Train on the past, test on the future. A
+   random split lets the model see a channel's July while predicting its June.
+3. **Scored against baselines that need no model.** Always-guess-the-commonest
+   already scores 35%. The baseline that matters is *channel history alone*.
+
+### The result, on 6,114 real Shorts
+
+| | exact bucket | MAE (log10) |
+|---|---|---|
+| always guess FLOP | 34.8% | - |
+| **channel history alone** | **66.9%** | **0.325** |
+| full model, 22 features | 67.6% | 0.361 |
+
+**Verdict: no signal beyond channel history.** The model crushes the naive
+baseline (67.6% vs 34.8%) and that number would look great quoted on its own.
+It is not: essentially all of it comes from knowing *which channel posted the
+video*. Every packaging and timing feature together adds ~0.7 points of
+accuracy and makes the magnitude error worse.
+
+Modelling the *residual* - over/under-performance against a channel's own
+median, which is the only part you can actually change - gives out-of-sample
+R-squared of **-0.07** and rank correlation **+0.22**. Weak, real, and nowhere
+near enough to forecast a view count.
+
+One thing did help. All the structural features (title length, digit counts,
+emoji, hashtags) achieved nothing; adding *topic* tokens - what the video is
+about - moved residual R-squared from -0.23 to -0.07 and rank correlation from
+0.16 to 0.22. Topic beats packaging, which is exactly what the packaging
+section of this README predicted and what most title-optimiser tools deny.
+
+This is the honest state. Reporting 67.6% without the 66.9% next to it would be
+the single most misleading thing this project could do.
+
+### Sampling decides everything
+
+The first real harvest returned 12,134 Shorts with **median views of 4.6
+million** and a 5th percentile of 181k - not one flop in the entire corpus,
+because discovery ordered search results by `viewCount` and so only ever found
+mega-channels. A classifier trained on that learns "everything goes viral" and
+scores beautifully on its own held-out split.
+
+Ordering by date helped only marginally (94% still VIRAL). What actually fixed
+it was **seed choice**: swapping broad seeds ("shorts", "viral", "comedy") for
+long-tail ones ("sourdough starter day 3", "excel pivot table tutorial")
+produced a corpus that is 48.7% FLOP, 33.8% JAIL, 1.8% VIRAL - a real
+distribution with real failures. Popular-sounding seeds were a bigger source of
+bias than the sort order was.
 
 ## Clip mining
 
@@ -279,7 +345,7 @@ sample and falls back to a conservative default instead.
 python -m unittest discover -s tests -v
 ```
 
-116 tests. The load-bearing ones are not the arithmetic checks - they are the
+138 tests. The load-bearing ones are not the arithmetic checks - they are the
 pair that plant a known effect in synthetic data and assert the engine
 recovers it, *and* plant nothing and assert it stays quiet. A pattern finder
 that always finds a pattern is a random number generator with a table.

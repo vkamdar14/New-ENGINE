@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 
 from . import __version__, report
 from .audit import audit_channel
+from .backtest import build_samples, render as render_backtest, run_backtest
 from .check import check_key, render as render_check
 from .client import QuotaExceeded, YouTubeClient
 from .clips import find_clips, mentions_from_comments, render_clips
@@ -198,6 +199,30 @@ def cmd_check(args, client):
     return 0
 
 
+def cmd_backtest(args, client):
+    """Predict view buckets before publication, then score against reality."""
+    store = CorpusStore(args.corpus)
+    videos = store.load_videos(shorts_only=not args.include_long)
+    if not videos:
+        print(f"error: {args.corpus} is empty - run 'harvest' first", file=sys.stderr)
+        return 2
+
+    samples = build_samples(videos)
+    print(f"\n  {len(videos):,} videos -> {len(samples):,} with a usable channel history")
+    if not samples:
+        print("  No video has 3+ matured earlier uploads on its channel, so there is")
+        print("  no honest channel prior to predict from. Harvest more per channel.")
+        return 1
+
+    r = run_backtest(samples, test_frac=args.test_frac, alpha=args.alpha,
+                     use_channel_prior=not args.no_channel_prior)
+    if r is None:
+        print("  Not enough data for a temporal split (need 100 train / 30 test).")
+        return 1
+    print(render_backtest(r, args.corpus))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="ytengine", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -236,6 +261,16 @@ def build_parser() -> argparse.ArgumentParser:
     sp = sub.add_parser("audit", help="keep/kill verdict per format")
     common(sp)
     sp.set_defaults(fn=cmd_audit)
+
+    sp = sub.add_parser("backtest", help="predict view buckets, then score against reality")
+    common(sp, needs_corpus=False)
+    sp.add_argument("--corpus", default="corpus.db", help="corpus database to backtest on")
+    sp.add_argument("--test-frac", type=float, default=0.25, help="most-recent share held out")
+    sp.add_argument("--alpha", type=float, default=1.0, help="ridge penalty")
+    sp.add_argument("--no-channel-prior", action="store_true",
+                    help="ablation: drop channel history, leaving packaging and timing only")
+    sp.add_argument("--include-long", action="store_true")
+    sp.set_defaults(fn=cmd_backtest)
 
     sp = sub.add_parser("check", help="verify YOUTUBE_API_KEY works, and say what it unlocks")
     common(sp, needs_corpus=False)
@@ -282,9 +317,9 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
-    if getattr(args, "offline", False) and args.cmd not in ("harvest", "clips", "check"):
+    if getattr(args, "offline", False) and args.cmd not in ("harvest", "clips", "check", "backtest"):
         print(OFFLINE_BANNER)
-    elif args.cmd not in ("harvest", "clips", "check") and hasattr(args, "niche") \
+    elif args.cmd not in ("harvest", "clips", "check", "backtest") and hasattr(args, "niche") \
             and not (args.niche or args.channel):
         print("error: need --niche or --channel (or --offline to try it out)", file=sys.stderr)
         return 2
