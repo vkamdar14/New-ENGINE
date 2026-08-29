@@ -23,6 +23,10 @@ from .backtest import build_samples, render as render_backtest, run_backtest
 from .check import check_key, render as render_check
 from .client import QuotaExceeded, YouTubeClient
 from .clips import find_clips, mentions_from_comments, render_clips
+from .editor import STYLES, EditSpec, build_ass, cues_from_words, render_plan
+from .rpm import compare as rpm_compare, render as render_rpm
+from .rss import render as render_rss, sweep as rss_sweep
+from .virality import render as render_virality, run_virality
 from .fixtures import make_corpus
 from .harvest import DEFAULT_REGIONS, DEFAULT_SEEDS, Harvester, HarvestPlan, estimate_quota
 from .metrics import AgeCurve, score_channel
@@ -223,6 +227,72 @@ def cmd_backtest(args, client):
     return 0
 
 
+def cmd_virality(args, client):
+    store = CorpusStore(args.corpus)
+    videos = store.load_videos(shorts_only=True)
+    if not videos:
+        print(f"error: {args.corpus} is empty - run 'harvest' first", file=sys.stderr)
+        return 2
+    samples = build_samples(videos)
+    out = run_virality(samples, test_frac=args.test_frac, alpha=args.alpha,
+                       use_topics=args.topics)
+    if out is None:
+        print("  not enough data for a temporal split", file=sys.stderr)
+        return 1
+    r, preds = out
+    print(render_virality(r, preds, show=args.show))
+    return 0
+
+
+def cmd_watch(args, client):
+    """Zero-quota RSS sweep over channels."""
+    ids = []
+    if args.channel:
+        ids += args.channel.split(",")
+    if args.from_corpus:
+        ids += list(CorpusStore(args.from_corpus).known_channel_ids())[:args.limit_channels]
+    if not ids:
+        print("error: need --channel or --from-corpus", file=sys.stderr)
+        return 2
+    print(f"  sweeping {len(ids)} feeds (no quota cost)...")
+    print(render_rss(rss_sweep(ids), limit=args.limit))
+    return 0
+
+
+def cmd_rpm(args, client):
+    niches = args.niches.split(",") if args.niches else list(__import__(
+        "ytengine.rpm", fromlist=["NICHE_RPM"]).NICHE_RPM)
+    print(render_rpm(rpm_compare(niches, args.views, is_shorts=not args.long_form),
+                     target_monthly=args.target))
+    return 0
+
+
+def cmd_edit(args, client):
+    """Turn a clip window into an ASS caption file plus a render command."""
+    style = STYLES[args.style]
+    words = []
+    if args.transcript:
+        # "start end word" per line - whatever your transcription tool emits.
+        with open(args.transcript) as fh:
+            for line in fh:
+                parts = line.split(None, 2)
+                if len(parts) == 3:
+                    try:
+                        words.append((float(parts[0]), float(parts[1]), parts[2].strip()))
+                    except ValueError:
+                        continue
+    spec = EditSpec(source=args.source, start_s=args.start, end_s=args.end,
+                    style=style, hook=args.hook or "", crop_mode=args.crop,
+                    cues=cues_from_words(words, style, offset_s=args.start) if words else [])
+    with open(args.ass, "w") as fh:
+        fh.write(build_ass(spec))
+    print(render_plan(spec, args.ass, args.out))
+    if not words:
+        print("\n  No transcript given, so the file carries styling and hook only.")
+        print("  Supply --transcript with 'start end word' lines for burned-in captions.")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="ytengine", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -261,6 +331,44 @@ def build_parser() -> argparse.ArgumentParser:
     sp = sub.add_parser("audit", help="keep/kill verdict per format")
     common(sp)
     sp.set_defaults(fn=cmd_audit)
+
+    sp = sub.add_parser("virality", help="0-100 score + band, with win rate and calibration")
+    common(sp, needs_corpus=False)
+    sp.add_argument("--corpus", default="corpus.db")
+    sp.add_argument("--test-frac", type=float, default=0.25)
+    sp.add_argument("--alpha", type=float, default=100.0)
+    sp.add_argument("--topics", action="store_true", help="add title-topic features")
+    sp.add_argument("--show", type=int, default=12)
+    sp.set_defaults(fn=cmd_virality)
+
+    sp = sub.add_parser("watch", help="zero-quota RSS sweep of channels")
+    common(sp, needs_corpus=False)
+    sp.add_argument("--channel", help="comma-separated UC... channel ids")
+    sp.add_argument("--from-corpus", help="sweep channels already in this corpus db")
+    sp.add_argument("--limit-channels", type=int, default=50)
+    sp.add_argument("--limit", type=int, default=30)
+    sp.set_defaults(fn=cmd_watch)
+
+    sp = sub.add_parser("rpm", help="rank niches by views x RPM, not views")
+    common(sp, needs_corpus=False)
+    sp.add_argument("--niches", help="comma-separated niches (default: all known)")
+    sp.add_argument("--views", type=int, default=1_000_000, help="monthly views")
+    sp.add_argument("--target", type=float, default=2000.0, help="monthly income target")
+    sp.add_argument("--long-form", action="store_true", help="long-form RPM, not shorts")
+    sp.set_defaults(fn=cmd_rpm)
+
+    sp = sub.add_parser("edit", help="clip window -> ASS captions + ffmpeg command")
+    common(sp, needs_corpus=False)
+    sp.add_argument("--source", required=True, help="source video file")
+    sp.add_argument("--start", type=float, required=True)
+    sp.add_argument("--end", type=float, required=True)
+    sp.add_argument("--style", default="punch", choices=sorted(STYLES))
+    sp.add_argument("--hook", help="text held over the first 2.5s")
+    sp.add_argument("--crop", default="center", choices=["center", "left", "right"])
+    sp.add_argument("--transcript", help="file of 'start end word' lines")
+    sp.add_argument("--ass", default="clip.ass")
+    sp.add_argument("--out", default="clip_out.mp4")
+    sp.set_defaults(fn=cmd_edit)
 
     sp = sub.add_parser("backtest", help="predict view buckets, then score against reality")
     common(sp, needs_corpus=False)
@@ -317,9 +425,11 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
-    if getattr(args, "offline", False) and args.cmd not in ("harvest", "clips", "check", "backtest"):
+    if getattr(args, "offline", False) and args.cmd not in ("harvest", "clips", "check", "backtest",
+                                                   "virality", "watch", "rpm", "edit"):
         print(OFFLINE_BANNER)
-    elif args.cmd not in ("harvest", "clips", "check", "backtest") and hasattr(args, "niche") \
+    elif args.cmd not in ("harvest", "clips", "check", "backtest",
+                            "virality", "watch", "rpm", "edit") and hasattr(args, "niche") \
             and not (args.niche or args.channel):
         print("error: need --niche or --channel (or --offline to try it out)", file=sys.stderr)
         return 2

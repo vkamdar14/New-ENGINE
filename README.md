@@ -30,6 +30,10 @@ cannot copy - and leaves format and packaging, which are the variables you can.
 | `harvest` | Build a large Shorts corpus, resumably, across as many days as it takes. |
 | `clips` | Which moments in a long video are worth cutting into Shorts? |
 | `backtest` | Predict a video's view bucket before publishing, then score it against reality. |
+| `virality` | 0-100 score + view band per video, with win rate and calibration. |
+| `watch` | Zero-quota RSS sweep - monitor any number of channels for free. |
+| `rpm` | Rank niches by views x RPM, because views are not income. |
+| `edit` | Clip window -> ASS caption file + the exact ffmpeg render command. |
 
 ## Getting an API key
 
@@ -111,6 +115,127 @@ python -m ytengine trends --db yt.db --topics "espresso,grinder,latte"
 
 Python 3.11+. No dependencies. Pillow is optional and only enables
 thumbnail checks.
+
+## Virality predictor
+
+```bash
+python -m ytengine virality --corpus corpus.db
+```
+
+Two outputs per video, answering different questions. A **0-100 score** is
+comparative - where this video sits in the corpus distribution - and is what
+you use to rank your own drafts. A **band** (FLOP / LOW / JAIL / MID / BIG /
+VIRAL) is absolute, and much harder.
+
+The headline is **pairwise win rate**: shown two videos, how often does the
+model correctly say which got more views? Plain accuracy misleads on a skewed
+corpus - if half your videos flop, always saying FLOP scores 50% while knowing
+nothing. Win rate has a fixed null of 50% however lopsided the classes are.
+
+### Measured on 3,993 real Shorts, tested on the 999 published latest
+
+```
+WIN RATE          81.7%   (coin flip = 50%, 498,463 pairs)
+rank correlation  0.820
+exact band        58.9%
+within one band   96.5%
+baselines:  always-commonest 52.4%   channel-history 59.4%
+```
+
+The ranking is genuinely good and the decile table is monotonic:
+
+| score decile | median actual views |
+|---|---|
+| 1 (lowest) | 541 |
+| 5 | 4,196 |
+| 9 | 14,585 |
+| 10 (highest) | 33,874 |
+
+**The top decile earns 62.6x the bottom.** That is a real, usable signal for
+deciding which clip to post next.
+
+The absolute numbers are not usable, and the report says so rather than hiding
+it. Exact-band accuracy (58.9%) loses to predicting the channel's own history
+(59.4%), and calibration runs about 1.7x high across every band - predicted
+FLOP median 2,315 against actual 1,078. Ranking and calibration fail
+independently: a model can order videos perfectly while every number it prints
+is wrong by a factor of two. This engine is built to be trusted for the first
+and not the second.
+
+### A metric bug worth knowing about
+
+The first implementation scored a **constant predictor at 100% win rate**. With
+tied predictions, `(pred[i] > pred[j]) == (truth[i] > truth[j])` evaluates
+`False == False` and counts as agreement - so a model saying the same thing
+about every video looked flawless. Ties now take half credit, the AUC
+convention, and a constant predictor correctly scores exactly 50%. The real
+81.7% was unaffected, because genuine predictions rarely tie - but the metric
+would have hidden a dead model completely.
+
+## Zero-quota monitoring
+
+```bash
+python -m ytengine watch --from-corpus corpus.db --limit-channels 50
+```
+
+`youtube.com/feeds/videos.xml?channel_id=...` returns a channel's 15 most
+recent uploads and **costs no quota at all**. Monitoring a thousand competitors
+through the Data API means burning quota every cycle; through RSS it is free
+and can run hourly forever. RSS discovers and triages for nothing, and the API
+is then spent only on the few videos worth hydrating.
+
+Feeds carry 15 entries, so a sweep run less often than a channel posts will
+miss uploads. Hourly is safe for almost anyone.
+
+## Views are not income
+
+```bash
+python -m ytengine rpm --views 1000000 --target 2000
+```
+
+Every other ranking in this repo sorts by views, which optimises the wrong
+variable if the goal is money. At 1M **Shorts** views per month:
+
+| niche | RPM | effective RPM | $/month |
+|---|---|---|---|
+| personal finance | 18.0 | 0.36 | $360 |
+| tech reviews | 7.0 | 0.14 | $140 |
+| comedy | 2.5 | 0.05 | $50 |
+| gaming | 2.0 | 0.04 | $40 |
+
+Two things fall out of that table. Personal finance earns **9x** gaming on
+identical view counts. And Shorts are weighted at 2% of long-form RPM, which is
+usually the larger number on the page: the same views as long-form earn roughly
+one fiftieth as much. A "best niche" generator that ranks by views is answering
+a different question than the one that pays rent.
+
+RPMs are order-of-magnitude industry ranges, not measurements. Replace them
+with your own Studio figures the moment you have any.
+
+## Clip -> edit spec
+
+```bash
+python -m ytengine edit --source vod.mp4 --start 3720 --end 3750 \
+    --style punch --hook "WAIT FOR IT" --transcript words.txt
+```
+
+Writes an ASS subtitle file and prints the exact ffmpeg command to burn it into
+a 1080x1920 cut. ASS rather than ffmpeg's `drawtext` because the format that
+performs needs per-word highlight timing, an outline *and* a shadow, and precise
+placement; drawtext does one word at a time with none of the styling.
+
+The layout constants come from how the Shorts player is built, not from taste:
+the bottom 18% of frame carries title and description, the right 14% is the
+like/comment rail, and captions placed in either are simply not read. So they
+sit at 62% of frame height - clear of the chrome, low enough to leave a face
+unobstructed. Four styles ship (`punch`, `clean`, `karaoke`, `docu`), each a
+coherent look, since size, stroke weight and cue length have to move together.
+
+Video is scaled-then-cropped to fill 9:16 rather than letterboxed: black bars
+read as low effort and cost the first-second retention that decides whether a
+clip travels.
+
+Rendering needs ffmpeg installed locally. The spec generation does not.
 
 ## Backtest: does any of this actually predict anything?
 
@@ -345,7 +470,7 @@ sample and falls back to a conservative default instead.
 python -m unittest discover -s tests -v
 ```
 
-138 tests. The load-bearing ones are not the arithmetic checks - they are the
+175 tests. The load-bearing ones are not the arithmetic checks - they are the
 pair that plant a known effect in synthetic data and assert the engine
 recovers it, *and* plant nothing and assert it stays quiet. A pattern finder
 that always finds a pattern is a random number generator with a table.
