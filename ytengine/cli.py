@@ -23,6 +23,7 @@ from .backtest import build_samples, render as render_backtest, run_backtest
 from .check import check_key, render as render_check
 from .client import QuotaExceeded, YouTubeClient
 from .clips import find_clips, mentions_from_comments, render_clips
+from .brains import compare_architectures, render as render_brains
 from .craft import (hook_candidates, pacing, plan_loop, render as render_craft,
                     suggest_style, validate)
 from .editor import STYLES, EditSpec, build_ass, cues_from_words, render_plan
@@ -307,6 +308,21 @@ def cmd_edit(args, client):
     return 0
 
 
+def cmd_brains(args, client):
+    """One global model against 144 partially-pooled segment models."""
+    videos = CorpusStore(args.corpus).load_videos(shorts_only=True)
+    if not videos:
+        print(f"error: {args.corpus} is empty - run 'harvest' first", file=sys.stderr)
+        return 2
+    c = compare_architectures(build_samples(videos, with_signals=True),
+                              test_frac=args.test_frac, alpha=args.alpha)
+    if c is None:
+        print("  not enough data to compare architectures", file=sys.stderr)
+        return 1
+    print(render_brains(c))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="ytengine", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -345,6 +361,13 @@ def build_parser() -> argparse.ArgumentParser:
     sp = sub.add_parser("audit", help="keep/kill verdict per format")
     common(sp)
     sp.set_defaults(fn=cmd_audit)
+
+    sp = sub.add_parser("brains", help="one model vs 144 segmented models, measured")
+    common(sp, needs_corpus=False)
+    sp.add_argument("--corpus", default="corpus.db")
+    sp.add_argument("--test-frac", type=float, default=0.25)
+    sp.add_argument("--alpha", type=float, default=100.0)
+    sp.set_defaults(fn=cmd_brains)
 
     sp = sub.add_parser("virality", help="0-100 score + band, with win rate and calibration")
     common(sp, needs_corpus=False)
@@ -445,11 +468,11 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
-    if getattr(args, "offline", False) and args.cmd not in ("harvest", "clips", "check", "backtest",
-                                                   "virality", "watch", "rpm", "edit"):
+    if getattr(args, "offline", False) and args.cmd not in ("harvest", "clips", "check", "backtest", "virality",
+                                                   "watch", "rpm", "edit", "brains"):
         print(OFFLINE_BANNER)
-    elif args.cmd not in ("harvest", "clips", "check", "backtest",
-                            "virality", "watch", "rpm", "edit") and hasattr(args, "niche") \
+    elif args.cmd not in ("harvest", "clips", "check", "backtest", "virality",
+                            "watch", "rpm", "edit", "brains") and hasattr(args, "niche") \
             and not (args.niche or args.channel):
         print("error: need --niche or --channel (or --offline to try it out)", file=sys.stderr)
         return 2
