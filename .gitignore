@@ -3,3 +3,7 @@ __pycache__/
 .cache/
 *.db
 .venv/
+drdonut_clips.tar.gz
+*.tar.gz
+*.mp4
+*.webm
