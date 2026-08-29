@@ -1,0 +1,3 @@
+# ytengine has no required dependencies - it runs on the Python 3.11 stdlib.
+# Pillow is optional and only enables `--thumbnail` image checks.
+Pillow>=10.0.0 ; extra == "thumbnails"

@@ -1,0 +1,137 @@
+# ytengine
+
+A YouTube growth engine. It measures what actually earns views so you can
+decide what to make next.
+
+It does **not** inflate views. There are no bots, proxies, autoplay loops or
+retention fakers here, and there will not be. Those get channels demonetised
+and terminated, and the views they produce are worthless anyway - inflated
+watch time teaches the recommendation system that your video disappoints real
+audiences, which suppresses the distribution you were trying to buy. The way
+to a million views is a video the algorithm can profitably show to strangers.
+This tool helps you find out what that is.
+
+## What it does
+
+Four analyses, all built on one number: the **multiplier** - how many times its
+own channel's normal performance a video achieved.
+
+Raw view counts cannot guide decisions. 200k views is a disaster on a channel
+that normally does 2M and a career-maker on one that normally does 5k.
+Dividing by the channel's own baseline removes channel size - the variable you
+cannot copy - and leaves format and packaging, which are the variables you can.
+
+| Command | Question it answers |
+|---|---|
+| `outliers` | Which videos in this niche beat their own channel, and what do they share? |
+| `packaging` | Which title features actually predict overperformance *here*? Score my drafts. |
+| `audit` | On my channel, which formats should I double down on and which should I kill? |
+| `trends` | Which topics are still accelerating, so I publish into a rising curve? |
+
+## Quickstart
+
+No API key needed to try it - every command takes `--offline` and runs the
+full pipeline against synthetic data:
+
+```bash
+python -m ytengine outliers  --offline
+python -m ytengine audit     --offline
+python -m ytengine packaging --offline --title "7 Espresso Mistakes" --title "Why Espresso Tastes Bad"
+```
+
+Against real data:
+
+```bash
+export YOUTUBE_API_KEY=...
+
+# what overperforms in a niche, biased toward small channels
+python -m ytengine outliers --niche "home espresso" --max-subs 100000
+
+# fit a title model on that niche, then rank your drafts against it
+python -m ytengine packaging --niche "home espresso" \
+    --title "7 Espresso Mistakes Killing Your Shots" \
+    --title "Why Your Espresso Tastes Bad" \
+    --thumbnail ./draft.jpg
+
+# keep/kill by format on your own channel
+python -m ytengine audit --channel UCxxxxxxxxxxxxxxxxxxxxxx
+
+# velocity needs two observations - snapshot on a schedule, then read trends
+python -m ytengine track  --channel UCxxxx --db yt.db   # cron this, hourly
+python -m ytengine trends --db yt.db --topics "espresso,grinder,latte"
+```
+
+Python 3.11+. No dependencies. Pillow is optional and only enables
+thumbnail checks.
+
+## Quota is the real constraint
+
+A default API project gets 10,000 units/day, and endpoint costs are wildly
+uneven:
+
+| Endpoint | Cost | Returns |
+|---|---|---|
+| `search.list` | **100** | 50 items |
+| `playlistItems.list` | 1 | 50 items |
+| `videos.list` | 1 | up to 50 items, fully hydrated |
+| `channels.list` | 1 | up to 50 channels |
+
+So pulling a 200-video channel through `search` costs 400 units; reaching the
+same videos through the channel's uploads playlist costs 8. That is the
+difference between auditing 25 channels a day and auditing 1,000.
+
+This client never uses `search.list` for anything reachable another way - it
+appears once, to discover channels in a niche, and never again. Every response
+is cached to disk, so re-running an analysis on the same corpus is free.
+
+## How the multiplier is computed
+
+1. **Split by format.** Shorts and long-form are different distribution
+   systems and never share a baseline.
+2. **Baseline on mature videos only.** A 2-day-old upload in the baseline
+   would drag the median down and inflate every multiplier measured against it.
+3. **Leave-one-out.** A breakout is excluded from the baseline it is scored
+   against, so it cannot raise its own bar and disguise a 10x as a 6x.
+4. **Age-adjust.** A 4-day-old video has not finished earning its views.
+   We divide by an empirical age curve fitted on the corpus.
+
+The age curve is fitted on *within-channel* view ratios rather than raw
+medians. Channel sizes in a normal corpus span three orders of magnitude, so
+whether an age bucket happens to contain big channels or small ones would
+otherwise move the fitted fraction far more than age does.
+
+## What it deliberately will not tell you
+
+- **Precise forecasts.** Title scores rank drafts against each other. They are
+  not predictions of absolute views, and the tool says so wherever it prints one.
+- **A high R².** Packaging is a minority of the variance in video performance;
+  topic and audience fit dominate. Expect R² around 0.1-0.25. Anything above
+  ~0.4 on this feature set is overfitting, and the reports flag weak fits
+  rather than hiding them.
+- **Findings from thin data.** Baselines below 5 mature videos are marked
+  unreliable, patterns below 4 supporting outliers are dropped, and the
+  packaging model refuses to fit under 20 videos.
+- **CTR, retention, or impressions.** Those live in YouTube Analytics and are
+  only available to a channel's owner via OAuth. Everything here is computed
+  from public Data API fields. Engagement rate is used as a weak proxy and is
+  labelled as one.
+
+## Assumptions worth knowing
+
+The age curve assumes channels in the corpus were producing
+comparable-performing videos across the whole window. A channel that doubled
+in size last month genuinely has better recent videos, and the curve reads
+that as "videos mature fast". Across many channels this largely cancels; on a
+single small channel it does not, which is why the fit refuses below a minimum
+sample and falls back to a conservative default instead.
+
+## Tests
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+57 tests. The load-bearing ones are not the arithmetic checks - they are the
+pair that plant a known effect in synthetic data and assert the engine
+recovers it, *and* plant nothing and assert it stays quiet. A pattern finder
+that always finds a pattern is a random number generator with a table.
