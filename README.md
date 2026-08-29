@@ -135,12 +135,46 @@ nothing. Win rate has a fixed null of 50% however lopsided the classes are.
 ### Measured on 3,993 real Shorts, tested on the 999 published latest
 
 ```
-WIN RATE          81.7%   (coin flip = 50%, 498,463 pairs)
-rank correlation  0.820
-exact band        58.9%
-within one band   96.5%
+WIN RATE          82.5%   (coin flip = 50%, 498,463 pairs)
+rank correlation  0.835
+exact band        61.4%
+within one band   96.8%
 baselines:  always-commonest 52.4%   channel-history 59.4%
 ```
+
+Exact-band accuracy now clears the channel-history baseline (61.4% vs 59.4%),
+which it did not before the signal engines below were added.
+
+### Signal engines - and how they were judged
+
+Five families of extra pre-publication features, each aimed at something a
+*static* channel median cannot express:
+
+| family | what it captures | effect |
+|---|---|---|
+| momentum | the derivative of a channel, not its level | largest single contributor |
+| cadence | gap since last upload, posting regularity | second |
+| format | hashtag and tag choices, reused titles | drives exact accuracy and lift |
+| fatigue | novelty against the channel's own recent titles | marginal |
+| saturation | how crowded the topic was at publish time | negligible |
+
+Adding all five moved win rate 81.7% -> 82.5%, rank correlation 0.820 -> 0.835,
+exact band 58.9% -> 61.4%, and **decile lift 62.6x -> 87.0x**.
+
+The instructive part was trying to prune them. A leave-one-out sweep on the
+test set said `fatigue` was actively harmful - removing it improved every
+metric. But that sweep *was itself scored on the test set*, so a leak-free
+greedy selection was run on a validation slice instead. It chose momentum +
+cadence + fatigue, and that "selected" configuration then performed **worse**
+on the held-out test (82.16%, lift 55x) than simply keeping all five (82.48%,
+lift 87x).
+
+Both prunings were noise. On 749 validation rows, feature selection overfits
+the selection set just as readily as a model overfits training data, and ridge
+already handles redundant features. All five families stay in. The lesson
+generalises: on data this size, regularise rather than select.
+
+Ablate them yourself with `--no-signals`.
 
 The ranking is genuinely good and the decile table is monotonic:
 
@@ -236,6 +270,27 @@ read as low effort and cost the first-second retention that decides whether a
 clip travels.
 
 Rendering needs ffmpeg installed locally. The spec generation does not.
+
+### Craft engines: catching what a spec hides
+
+`--auto-style` picks the caption look from the speech itself (dense speech gets
+smaller text and longer cues, or it overflows), and every `edit` run is checked
+before it is rendered. The failures below are invisible in a spec and obvious
+in a finished video:
+
+- **Caption overflow.** Text wider than the 960px safe area wraps mid-phrase.
+  Width is estimated per font from point size, which is enough to catch the
+  30%-over case without needing font metrics.
+- **Unreadable cues.** A caption held 0.2s flickers; one needing 3s of reading
+  shown for 1s is decoration. Both are flagged with the numbers.
+- **Silence.** The longest gap with no caption on screen is where sound-off
+  viewers leave, and coverage below ~60% means they lose the thread.
+- **Hook collisions.** A hook sharing the screen with captions in the first
+  2.5s reads as clutter, and a hook too long to read in that window is wasted.
+- **The loop seam.** Shorts autoplay end-to-start, so trailing dead air makes
+  the seam obvious and hands the viewer a moment to swipe. Replays are among
+  the strongest signals the format has, and closing on the payoff instead of
+  on silence buys a second view for free.
 
 ## Backtest: does any of this actually predict anything?
 
@@ -470,7 +525,7 @@ sample and falls back to a conservative default instead.
 python -m unittest discover -s tests -v
 ```
 
-175 tests. The load-bearing ones are not the arithmetic checks - they are the
+210 tests. The load-bearing ones are not the arithmetic checks - they are the
 pair that plant a known effect in synthetic data and assert the engine
 recovers it, *and* plant nothing and assert it stays quiet. A pattern finder
 that always finds a pattern is a random number generator with a table.

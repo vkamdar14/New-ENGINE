@@ -37,6 +37,7 @@ from typing import Optional, Sequence
 
 from .models import Video
 from .packaging import CURIOSITY, STAKES
+from .signals import SIGNAL_FEATURES, CorpusIndex, compute as compute_signals
 from .stats import median, quantile, ridge_fit, spearman
 
 # The buckets. Absolute view counts, because for a channel starting from zero
@@ -105,7 +106,8 @@ def _title_feats(v: Video) -> dict[str, float]:
     }
 
 
-def build_samples(videos: Sequence[Video], now: Optional[datetime] = None) -> list[Sample]:
+def build_samples(videos: Sequence[Video], now: Optional[datetime] = None,
+                  with_signals: bool = False) -> list[Sample]:
     """Turn videos into training rows, with a strictly-causal channel prior.
 
     The channel prior is the median of that channel's videos published at least
@@ -116,6 +118,7 @@ def build_samples(videos: Sequence[Video], now: Optional[datetime] = None) -> li
     """
     now = now or datetime.now(timezone.utc)
     mature = [v for v in videos if v.age_days(now) >= MATURITY_DAYS and v.views > 0]
+    index = CorpusIndex.build(mature) if with_signals else None
 
     by_channel: dict[str, list[Video]] = defaultdict(list)
     for v in mature:
@@ -147,6 +150,12 @@ def build_samples(videos: Sequence[Video], now: Optional[datetime] = None) -> li
                 "dow_cos": math.cos(2 * math.pi * v.published_at.weekday() / 7),
             }
             feats.update(_title_feats(v))
+            if with_signals:
+                # Prior videos only, and prior *matured* ones for anything that
+                # touches a view count - same causality rule as the channel
+                # prior itself.
+                earlier = [p for p in vids[:i] if p.published_at <= cutoff]
+                feats.update(compute_signals(v, earlier, prior, index))
             samples.append(Sample(video=v, features=feats,
                                   log_views=math.log10(v.views), bucket=bucket_of(v.views)))
     samples.sort(key=lambda s: s.video.published_at)
@@ -238,10 +247,22 @@ def _predict(coefs, s: Sample, feats: Sequence[str], vocab: Sequence[str] = ()) 
     return intercept + sum(c * v for c, v in zip(slopes, _row(s, feats, vocab)))
 
 
+def active_features(samples: Sequence[Sample]) -> list[str]:
+    """FEATURES plus any signal features the samples actually carry.
+
+    Keyed off the data rather than a flag so a caller cannot ask for a model
+    over features its samples were never built with - that mismatch produces a
+    KeyError deep in the fit, where it is far harder to read than here.
+    """
+    if samples and all(f in samples[0].features for f in SIGNAL_FEATURES):
+        return FEATURES + SIGNAL_FEATURES
+    return list(FEATURES)
+
+
 def run_backtest(samples: Sequence[Sample], test_frac: float = 0.25,
                  alpha: float = 1.0, use_channel_prior: bool = True,
                  use_topics: bool = True, vocab_size: int = 250) -> Optional[Report]:
-    feats = [f for f in FEATURES
+    feats = [f for f in active_features(samples)
              if use_channel_prior or f not in CHANNEL_PRIOR_FEATURES]
     train, test = temporal_split(samples, test_frac)
     if len(train) < 100 or len(test) < 30:

@@ -27,7 +27,7 @@ from dataclasses import dataclass, field
 from typing import Optional, Sequence
 
 from .backtest import (CHANNEL_PRIOR_FEATURES, FEATURES, Sample, _fit, _predict,
-                       build_vocabulary, temporal_split)
+                       active_features, build_vocabulary, temporal_split)
 from .stats import median, quantile, spearman
 
 # The bands, in absolute views.
@@ -168,7 +168,8 @@ def run_virality(samples: Sequence[Sample], test_frac: float = 0.25,
                  alpha: float = 100.0, use_topics: bool = False,
                  use_channel_prior: bool = True
                  ) -> Optional[tuple[ViralityReport, list[Prediction]]]:
-    feats = [f for f in FEATURES if use_channel_prior or f not in CHANNEL_PRIOR_FEATURES]
+    feats = [f for f in active_features(samples)
+             if use_channel_prior or f not in CHANNEL_PRIOR_FEATURES]
     train, test = temporal_split(samples, test_frac)
     if len(train) < 100 or len(test) < 30:
         return None

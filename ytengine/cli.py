@@ -23,6 +23,8 @@ from .backtest import build_samples, render as render_backtest, run_backtest
 from .check import check_key, render as render_check
 from .client import QuotaExceeded, YouTubeClient
 from .clips import find_clips, mentions_from_comments, render_clips
+from .craft import (hook_candidates, pacing, plan_loop, render as render_craft,
+                    suggest_style, validate)
 from .editor import STYLES, EditSpec, build_ass, cues_from_words, render_plan
 from .rpm import compare as rpm_compare, render as render_rpm
 from .rss import render as render_rss, sweep as rss_sweep
@@ -211,7 +213,7 @@ def cmd_backtest(args, client):
         print(f"error: {args.corpus} is empty - run 'harvest' first", file=sys.stderr)
         return 2
 
-    samples = build_samples(videos)
+    samples = build_samples(videos, with_signals=not args.no_signals)
     print(f"\n  {len(videos):,} videos -> {len(samples):,} with a usable channel history")
     if not samples:
         print("  No video has 3+ matured earlier uploads on its channel, so there is")
@@ -233,7 +235,7 @@ def cmd_virality(args, client):
     if not videos:
         print(f"error: {args.corpus} is empty - run 'harvest' first", file=sys.stderr)
         return 2
-    samples = build_samples(videos)
+    samples = build_samples(videos, with_signals=not args.no_signals)
     out = run_virality(samples, test_frac=args.test_frac, alpha=args.alpha,
                        use_topics=args.topics)
     if out is None:
@@ -286,7 +288,19 @@ def cmd_edit(args, client):
                     cues=cues_from_words(words, style, offset_s=args.start) if words else [])
     with open(args.ass, "w") as fh:
         fh.write(build_ass(spec))
+    if args.auto_style and spec.cues:
+        spec.style = suggest_style(spec.cues, spec.duration_s)
+        spec.cues = cues_from_words(words, spec.style, offset_s=args.start)
+        with open(args.ass, "w") as fh:
+            fh.write(build_ass(spec))
+        print(f"  auto-selected style: {spec.style.name}")
+
     print(render_plan(spec, args.ass, args.out))
+    print(render_craft(spec, validate(spec), pacing(spec.cues, spec.duration_s),
+                       plan_loop(spec)))
+    if not spec.hook and words:
+        print("\n  hook suggestions: " +
+              ", ".join(f'"{h}"' for h in hook_candidates(" ".join(w for _, _, w in words[:6]))))
     if not words:
         print("\n  No transcript given, so the file carries styling and hook only.")
         print("  Supply --transcript with 'start end word' lines for burned-in captions.")
@@ -338,6 +352,8 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--test-frac", type=float, default=0.25)
     sp.add_argument("--alpha", type=float, default=100.0)
     sp.add_argument("--topics", action="store_true", help="add title-topic features")
+    sp.add_argument("--no-signals", action="store_true",
+                    help="ablation: drop momentum/fatigue/cadence/saturation/format engines")
     sp.add_argument("--show", type=int, default=12)
     sp.set_defaults(fn=cmd_virality)
 
@@ -366,6 +382,8 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--hook", help="text held over the first 2.5s")
     sp.add_argument("--crop", default="center", choices=["center", "left", "right"])
     sp.add_argument("--transcript", help="file of 'start end word' lines")
+    sp.add_argument("--auto-style", action="store_true",
+                    help="pick the caption style from the speech pacing")
     sp.add_argument("--ass", default="clip.ass")
     sp.add_argument("--out", default="clip_out.mp4")
     sp.set_defaults(fn=cmd_edit)
@@ -375,6 +393,8 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--corpus", default="corpus.db", help="corpus database to backtest on")
     sp.add_argument("--test-frac", type=float, default=0.25, help="most-recent share held out")
     sp.add_argument("--alpha", type=float, default=1.0, help="ridge penalty")
+    sp.add_argument("--no-signals", action="store_true",
+                    help="ablation: drop the signal engines")
     sp.add_argument("--no-channel-prior", action="store_true",
                     help="ablation: drop channel history, leaving packaging and timing only")
     sp.add_argument("--include-long", action="store_true")
