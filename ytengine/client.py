@@ -176,6 +176,45 @@ class YouTubeClient:
         ]
         return self.videos_by_id(ids)
 
+    def search_video_ids(
+        self,
+        query: str,
+        limit: int = 50,
+        region: str | None = None,
+        published_after: str | None = None,
+        published_before: str | None = None,
+        video_duration: str | None = None,
+    ) -> list[str]:
+        """Search for video ids. The expensive call - 100 units per 50 results.
+
+        `search.list` refuses to paginate past roughly 500 results for any one
+        query, however many pageTokens you feed it. That cap is per *query*,
+        not per key, so the way to breadth is many narrow queries - the same
+        term sliced by region and by publish window - rather than one broad
+        query paginated harder. `harvest.py` builds those slices.
+
+        `video_duration="short"` asks YouTube for sub-4-minute videos, which
+        is the closest server-side filter to Shorts; the real <=180s test still
+        happens client-side after hydration.
+        """
+        params = {
+            "part": "snippet",
+            "q": query,
+            "type": "video",
+            "regionCode": region,
+            "publishedAfter": published_after,
+            "publishedBefore": published_before,
+            "videoDuration": video_duration,
+            "order": "viewCount",
+        }
+        out, seen = [], set()
+        for it in self._paginate("search", params, cap=limit):
+            vid = it.get("id", {}).get("videoId")
+            if vid and vid not in seen:
+                seen.add(vid)
+                out.append(vid)
+        return out
+
     def search_channels(self, query: str, limit: int = 25) -> list[str]:
         """The one place search.list is unavoidable: discovering a niche.
 

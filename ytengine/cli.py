@@ -21,10 +21,11 @@ from . import __version__, report
 from .audit import audit_channel
 from .client import QuotaExceeded, YouTubeClient
 from .fixtures import make_corpus
+from .harvest import DEFAULT_REGIONS, DEFAULT_SEEDS, Harvester, HarvestPlan, estimate_quota
 from .metrics import AgeCurve, score_channel
 from .outliers import extract_patterns, find_opportunities
 from .packaging import fit_packaging, thumbnail_stats
-from .store import SnapshotStore
+from .store import CorpusStore, SnapshotStore
 from .trends import rank_rising, topic_trends
 
 OFFLINE_BANNER = (
@@ -111,6 +112,40 @@ def cmd_trends(args, client):
     return 0
 
 
+def cmd_harvest(args, client):
+    """Build a large corpus, resumably, across as many days as it takes."""
+    store = CorpusStore(args.corpus)
+    before = store.counts()
+
+    if args.estimate:
+        est = estimate_quota(args.target, channels_needed=args.target // 200)
+        print(f"\n  {args.target:,} videos would cost ~{est['total_units']:,} quota units")
+        print(f"    expansion {est['expansion_units']:,}u + discovery {est['discovery_units']:,}u")
+        print(f"    ~{est['days_at_10k']} day(s) on a default 10,000-unit key")
+        return 0
+
+    if client is None:
+        print("error: harvesting needs a real API key (YOUTUBE_API_KEY); "
+              "--offline cannot invent a corpus", file=sys.stderr)
+        return 2
+
+    plan = HarvestPlan(
+        seeds=args.seeds.split(",") if args.seeds else list(DEFAULT_SEEDS),
+        regions=args.regions.split(",") if args.regions else list(DEFAULT_REGIONS),
+        windows=args.windows,
+    )
+    print(f"\n  plan: {plan.total_slices:,} query slices "
+          f"({len(plan.seeds)} seeds x {len(plan.regions)} regions x {plan.windows} windows)")
+    print(f"  already held: {before['videos']:,} videos / {before['shorts']:,} shorts")
+
+    harvester = Harvester(client, store, shorts_only=not args.include_long)
+    report = harvester.run(plan, target=args.target,
+                           max_discovery_slices=args.discovery_slices,
+                           per_channel=args.per_channel)
+    print(report.render(store.counts()))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="ytengine", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -150,6 +185,20 @@ def build_parser() -> argparse.ArgumentParser:
     common(sp)
     sp.set_defaults(fn=cmd_audit)
 
+    sp = sub.add_parser("harvest", help="build a large corpus, resumably")
+    common(sp)
+    sp.add_argument("--target", type=int, default=30000, help="videos to add this run")
+    sp.add_argument("--corpus", default="corpus.db", help="corpus database path")
+    sp.add_argument("--seeds", help="comma-separated search seeds")
+    sp.add_argument("--regions", help="comma-separated region codes")
+    sp.add_argument("--windows", type=int, default=8, help="publish-window slices per seed/region")
+    sp.add_argument("--discovery-slices", type=int, default=10,
+                    help="max search slices per run (search costs 100u each)")
+    sp.add_argument("--per-channel", type=int, default=500, help="uploads to walk per channel")
+    sp.add_argument("--include-long", action="store_true", help="keep long-form too, not just shorts")
+    sp.add_argument("--estimate", action="store_true", help="print quota cost and exit")
+    sp.set_defaults(fn=cmd_harvest)
+
     sp = sub.add_parser("track", help="snapshot counters for velocity")
     common(sp)
     sp.set_defaults(fn=cmd_track)
@@ -165,9 +214,9 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
-    if getattr(args, "offline", False):
+    if getattr(args, "offline", False) and args.cmd != "harvest":
         print(OFFLINE_BANNER)
-    elif hasattr(args, "niche") and not (args.niche or args.channel):
+    elif args.cmd != "harvest" and hasattr(args, "niche") and not (args.niche or args.channel):
         print("error: need --niche or --channel (or --offline to try it out)", file=sys.stderr)
         return 2
 

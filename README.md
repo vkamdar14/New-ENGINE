@@ -27,6 +27,7 @@ cannot copy - and leaves format and packaging, which are the variables you can.
 | `packaging` | Which title features actually predict overperformance *here*? Score my drafts. |
 | `audit` | On my channel, which formats should I double down on and which should I kill? |
 | `trends` | Which topics are still accelerating, so I publish into a rising curve? |
+| `harvest` | Build a large Shorts corpus, resumably, across as many days as it takes. |
 
 ## Quickstart
 
@@ -63,6 +64,53 @@ python -m ytengine trends --db yt.db --topics "espresso,grinder,latte"
 
 Python 3.11+. No dependencies. Pillow is optional and only enables
 thumbnail checks.
+
+## Harvesting at scale
+
+```bash
+python -m ytengine harvest --estimate --target 30000     # cost check, no key needed
+python -m ytengine harvest --target 30000 --corpus corpus.db   # then run it daily
+```
+
+**What is not possible:** there is no way to get every Short. The Data API has
+no enumerate-all endpoint, `search.list` stops returning new results after
+roughly 500 per query however hard you paginate, and YouTube's index is not
+exposed. A complete census is out of reach for any third party at any budget -
+a billion Shorts would be ~20M quota units, about 2,000 days on a default key.
+
+**What is possible is large and compounds.** The two phases have wildly
+different economics:
+
+| phase | call | cost | capped? |
+|---|---|---|---|
+| discovery | `search.list` | 100 units / 50 results | yes, ~500 per query |
+| expansion | uploads playlist walk | 2 units / 50 videos | no |
+
+Expansion is 50x cheaper per video and has no ceiling, so the strategy is to
+spend a little quota finding *channels* and the rest walking their entire back
+catalogues. The 500-result cap is per *query*, not per key, so breadth comes
+from slicing the same seed across regions and publish windows - the default
+grid is 20 seeds x 10 regions x 8 windows = 1,600 distinct queries.
+
+Measured against a simulated API, one default 10,000-unit key sustains roughly
+**30,000 Shorts per day** using about two thirds of the budget, and the corpus
+keeps growing every day the harvester is re-run:
+
+```
+day 1: +30,018   quota 6,912u   corpus  30,018
+day 2: +30,192   quota 6,104u   corpus  60,210
+day 3: +30,191   quota 6,104u   corpus  90,401
+day 5: +30,190   quota 6,104u   corpus 150,607
+```
+
+Everything is checkpointed in SQLite - retired query slices, walked channels,
+stored videos - so a crash or a quota reset costs nothing but the current
+batch. Re-running resumes rather than restarting.
+
+Videos are inserted with `INSERT OR IGNORE`, never `REPLACE`: a Short
+re-encountered next week must keep its original counters, or the age-vs-views
+relationship every baseline depends on is silently destroyed. Re-observation
+is a different job and belongs in the snapshot store.
 
 ## Quota is the real constraint
 
@@ -131,7 +179,12 @@ sample and falls back to a conservative default instead.
 python -m unittest discover -s tests -v
 ```
 
-57 tests. The load-bearing ones are not the arithmetic checks - they are the
+83 tests. The load-bearing ones are not the arithmetic checks - they are the
 pair that plant a known effect in synthetic data and assert the engine
 recovers it, *and* plant nothing and assert it stays quiet. A pattern finder
 that always finds a pattern is a random number generator with a table.
+
+The harvest suite runs against a fake client that charges real quota costs -
+a test needing live quota is a test nobody runs - and asserts the property a
+live test could never check deterministically: that a run interrupted by a
+dead quota resumes rather than restarts.
