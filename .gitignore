@@ -7,3 +7,6 @@ drdonut_clips.tar.gz
 *.tar.gz
 *.mp4
 *.webm
+drdonut_package/
+reel/
+render/
