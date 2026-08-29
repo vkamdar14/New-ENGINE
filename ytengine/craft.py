@@ -33,7 +33,9 @@ READ_CPS = 16.0
 # exact metrics need the font file, and the point of this is to catch the
 # 30%-over case, not to typeset.
 CHAR_WIDTH_RATIO = {"Impact": 0.46, "Arial Black": 0.58,
-                    "Montserrat ExtraBold": 0.55, "Helvetica": 0.50}
+                    "Montserrat ExtraBold": 0.55, "Helvetica": 0.50,
+                    "DejaVu Sans": 0.62, "Liberation Sans": 0.55,
+                    "FreeSans": 0.55, "Anton": 0.42, "Archivo Black": 0.60}
 DEFAULT_RATIO = 0.52
 
 SAFE_WIDTH = WIDTH - 120           # 60px margin each side, matching the ASS styles
@@ -43,8 +45,20 @@ SHORTS_MAX_S = 180.0
 IDEAL_MIN_S, IDEAL_MAX_S = 15.0, 45.0
 
 
-def estimate_width_px(text: str, style: CaptionStyle) -> float:
-    ratio = CHAR_WIDTH_RATIO.get(style.font, DEFAULT_RATIO)
+def estimate_width_px(text: str, style: CaptionStyle,
+                      rendered_font: Optional[str] = None) -> float:
+    """Approximate rendered width.
+
+    `rendered_font` matters whenever the style's face is not installed. A spec
+    naming Impact (narrow, ratio 0.46) that actually renders in DejaVu Sans
+    (wide, 0.62) is a third wider than the estimate - so overflow checks pass
+    on a line that visibly runs off the frame. Measured on a real render:
+    "WALKED INTO HIS" was predicted at 662px and rendered near 850px.
+
+    Pass the resolved font, not the requested one.
+    """
+    font = rendered_font or style.font
+    ratio = CHAR_WIDTH_RATIO.get(font, DEFAULT_RATIO)
     return len(text) * style.size * ratio
 
 
@@ -119,9 +133,25 @@ def pacing(cues: Sequence[Cue], duration_s: float) -> PacingReport:
     )
 
 
-def validate(spec: EditSpec) -> list[Issue]:
-    """Catch the failures that are invisible in a spec and obvious on screen."""
+def validate(spec: EditSpec, rendered_font: Optional[str] = None) -> list[Issue]:
+    """Catch the failures that are invisible in a spec and obvious on screen.
+
+    `rendered_font` should be the font that will actually be used - see
+    `estimate_width_px`. Omitted, the check assumes the style's own face is
+    installed, which is exactly the assumption that lets an overflowing line
+    through on a machine missing it.
+    """
     issues: list[Issue] = []
+    if rendered_font is None:
+        from .editor import resolve_font
+        rendered_font, exact = resolve_font(spec.style.font)
+        if not exact:
+            issues.append(Issue(
+                "warn", "font",
+                f"'{spec.style.font}' is not installed; libass will render "
+                f"'{rendered_font}' instead",
+                "install the font on the render machine, or pick a style whose "
+                "face you have"))
     d = spec.duration_s
 
     if d <= 0:
@@ -136,10 +166,10 @@ def validate(spec: EditSpec) -> list[Issue]:
                             "range most Shorts land in"))
 
     for i, c in enumerate(spec.cues):
-        if estimate_width_px(c.text, spec.style) > SAFE_WIDTH:
+        if estimate_width_px(c.text, spec.style, rendered_font) > SAFE_WIDTH:
             issues.append(Issue(
                 "warn", f"cue {i}",
-                f"\"{c.text[:28]}\" is ~{estimate_width_px(c.text, spec.style):.0f}px wide "
+                f"\"{c.text[:28]}\" is ~{estimate_width_px(c.text, spec.style, rendered_font):.0f}px wide "
                 f"against {SAFE_WIDTH}px safe area",
                 "lower words-per-cue or pick a smaller style"))
         length = c.end_s - c.start_s
@@ -159,7 +189,7 @@ def validate(spec: EditSpec) -> list[Issue]:
             issues.append(Issue("warn", "hook",
                                 f"\"{spec.hook}\" needs ~{readable_seconds(spec.hook):.1f}s "
                                 "to read but holds for 2.5s", "shorten it"))
-        if estimate_width_px(spec.hook, spec.style) > SAFE_WIDTH:
+        if estimate_width_px(spec.hook, spec.style, rendered_font) > SAFE_WIDTH:
             issues.append(Issue("warn", "hook", "wider than the safe area"))
         early = [c for c in spec.cues if c.start_s < 2.5]
         if early:

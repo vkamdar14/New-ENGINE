@@ -201,3 +201,53 @@ class TestLoopAndStyle(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class TestFontSubstitution(unittest.TestCase):
+    """Regression: a substituted font breaks the overflow check.
+
+    libass silently swaps in a different face when the requested one is
+    missing. If the width estimate keeps using the *requested* font's metrics,
+    a narrow spec (Impact, 0.46) that renders wide (DejaVu Sans, 0.62) passes
+    the overflow check while visibly running off the frame. Measured on a real
+    1080x1920 render: "WALKED INTO HIS" was predicted at 662px and rendered
+    near 850px.
+    """
+
+    def test_wider_substitute_gives_a_wider_estimate(self):
+        from ytengine.craft import estimate_width_px
+        t = "WALKED INTO HIS"
+        narrow = estimate_width_px(t, STYLES["punch"])                   # Impact
+        wide = estimate_width_px(t, STYLES["punch"], "DejaVu Sans")
+        self.assertGreater(wide, narrow * 1.25)
+
+    def test_resolve_font_reports_substitution(self):
+        from ytengine.editor import resolve_font
+        got, exact = resolve_font("Impact", {"DejaVu Sans"})
+        self.assertEqual(got, "DejaVu Sans")
+        self.assertFalse(exact)
+
+    def test_resolve_font_prefers_an_exact_match(self):
+        from ytengine.editor import resolve_font
+        got, exact = resolve_font("Impact", {"Impact", "DejaVu Sans"})
+        self.assertEqual(got, "Impact")
+        self.assertTrue(exact)
+
+    def test_unknown_fontconfig_does_not_claim_substitution(self):
+        from ytengine.editor import resolve_font
+        got, exact = resolve_font("Impact", set())
+        self.assertEqual((got, exact), ("Impact", True))
+
+    def test_validate_warns_about_a_missing_font(self):
+        spec = EditSpec("s.mp4", 0.0, 25.0, STYLES["punch"],
+                        cues=[Cue(3.0, 5.0, "HI")], hook="WAIT")
+        issues = validate(spec, rendered_font=None)
+        # This container has no Impact, so the warning must appear.
+        from ytengine.editor import resolve_font
+        if not resolve_font("Impact")[1]:
+            self.assertTrue(any(i.where == "font" for i in issues))
+
+    def test_explicit_rendered_font_skips_the_lookup(self):
+        spec = EditSpec("s.mp4", 0.0, 25.0, STYLES["punch"],
+                        cues=[Cue(3.0, 5.0, "HI")], hook="WAIT")
+        self.assertFalse(any(i.where == "font" for i in validate(spec, rendered_font="Impact")))

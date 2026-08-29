@@ -26,6 +26,8 @@ from __future__ import annotations
 
 import re
 import shlex
+import subprocess
+from typing import Optional
 from dataclasses import dataclass, field
 from typing import Optional, Sequence
 
@@ -37,6 +39,49 @@ BOTTOM_CHROME = 0.18
 RIGHT_RAIL = 0.14
 CAPTION_Y = 0.62          # where captions sit, as a fraction of height
 HOOK_Y = 0.18             # hook text rides high, above the face
+
+
+# Fallback chains per style. libass silently substitutes when a font is
+# missing, so a spec naming Impact on a machine without it renders in whatever
+# libass picks - usually a thin default that destroys the look, with no error
+# anywhere. Each style therefore carries alternatives, and `resolve_font`
+# picks the first one actually installed.
+FONT_FALLBACKS = {
+    "Impact": ["Impact", "Anton", "Archivo Black", "DejaVu Sans", "Liberation Sans"],
+    "Arial Black": ["Arial Black", "Archivo Black", "DejaVu Sans", "Liberation Sans"],
+    "Montserrat ExtraBold": ["Montserrat ExtraBold", "Montserrat", "DejaVu Sans",
+                             "Liberation Sans"],
+    "Helvetica": ["Helvetica", "Liberation Sans", "DejaVu Sans", "FreeSans"],
+}
+
+
+def installed_fonts() -> set[str]:
+    """Font families fontconfig can see. Empty set if fontconfig is absent."""
+    try:
+        out = subprocess.run(["fc-list", ":", "family"], capture_output=True,
+                             text=True, timeout=10)
+    except (FileNotFoundError, subprocess.SubprocessError):
+        return set()
+    fams = set()
+    for line in out.stdout.splitlines():
+        for f in line.split(","):
+            fams.add(f.strip())
+    return fams
+
+
+def resolve_font(font: str, available: Optional[set[str]] = None) -> tuple[str, bool]:
+    """Pick the first installed font in this family's chain.
+
+    Returns (font, exact) so a caller can warn when it had to substitute -
+    the substitution itself is unavoidable, silently shipping it is not.
+    """
+    available = installed_fonts() if available is None else available
+    if not available:
+        return font, True          # cannot check; assume the spec is right
+    for candidate in FONT_FALLBACKS.get(font, [font]):
+        if candidate in available:
+            return candidate, candidate == font
+    return font, False
 
 
 @dataclass
@@ -55,11 +100,11 @@ class CaptionStyle:
     uppercase: bool = True
     words_per_cue: int = 3
 
-    def ass_style(self) -> str:
+    def ass_style(self, font: Optional[str] = None) -> str:
         # Alignment 2 = bottom-centre; MarginV then lifts it off the chrome.
         margin_v = int(HEIGHT * (1 - CAPTION_Y))
         return (
-            f"Style: Caption,{self.font},{self.size},{self.primary},{self.highlight},"
+            f"Style: Caption,{font or self.font},{self.size},{self.primary},{self.highlight},"
             f"{self.outline},&H80000000&,{self.bold},0,0,0,100,100,0,0,1,"
             f"{self.outline_w},{self.shadow},2,60,60,{margin_v},1"
         )
@@ -142,8 +187,14 @@ def cues_from_words(words: Sequence[tuple[float, float, str]],
     return cues
 
 
-def build_ass(spec: EditSpec) -> str:
-    """A complete ASS subtitle file for this clip."""
+def build_ass(spec: EditSpec, font: Optional[str] = None) -> str:
+    """A complete ASS subtitle file for this clip.
+
+    `font` overrides the style's face, for rendering on a machine that does not
+    have it. Pass `resolve_font(style.font)[0]` to substitute deliberately
+    rather than letting libass do it silently.
+    """
+    face = font or spec.style.font
     head = [
         "[Script Info]",
         "ScriptType: v4.00+",
@@ -156,12 +207,12 @@ def build_ass(spec: EditSpec) -> str:
         "Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,"
         "BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,"
         "BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding",
-        spec.style.ass_style(),
+        spec.style.ass_style(face),
     ]
     if spec.hook:
         # Alignment 8 = top-centre, so the hook cannot collide with captions.
         head.append(
-            f"Style: Hook,{spec.style.font},{int(spec.style.size * 1.05)},"
+            f"Style: Hook,{face},{int(spec.style.size * 1.05)},"
             f"&H00FFFFFF&,&H0000FFFF&,&H00000000&,&H90000000&,-1,0,0,0,100,100,0,0,1,"
             f"{spec.style.outline_w + 1},4,8,60,60,{int(HEIGHT * HOOK_Y)},1"
         )
