@@ -28,6 +28,7 @@ cannot copy - and leaves format and packaging, which are the variables you can.
 | `audit` | On my channel, which formats should I double down on and which should I kill? |
 | `trends` | Which topics are still accelerating, so I publish into a rising curve? |
 | `harvest` | Build a large Shorts corpus, resumably, across as many days as it takes. |
+| `clips` | Which moments in a long video are worth cutting into Shorts? |
 
 ## Quickstart
 
@@ -64,6 +65,60 @@ python -m ytengine trends --db yt.db --topics "espresso,grinder,latte"
 
 Python 3.11+. No dependencies. Pillow is optional and only enables
 thumbnail checks.
+
+## Clip mining
+
+```bash
+# every clippable moment in one VOD
+python -m ytengine clips --video VIDEOID
+
+# scan a creator's recent long uploads and rank moments across all of them
+python -m ytengine clips --channel UCxxxx --scan 25 --min-authors 5
+```
+
+Clipping a four-hour stream is not an editing problem, it is a *search*
+problem: there are ~480 candidate 30-second windows in four hours and maybe
+six are worth posting.
+
+YouTube knows exactly which moments get re-watched - that is the
+`mostReplayed` heatmap on the scrubber - but it is not in the Data API. The
+best public proxy is nearly free at **1 unit per 100 comments**: viewers
+timestamp the moments they want to re-watch. A comment reading "3:47 killed
+me" is a human vote for a specific second, and those votes concentrate hard.
+
+Details that decide whether the output is usable:
+
+- **Windows open ~14s *before* the marked second.** Viewers timestamp the
+  payoff, not the setup. A clip that opens on the punchline has no context and
+  dies in its first two seconds. This is the single highest-impact choice here.
+- **Kernel density, not a histogram.** Viewers' clocks disagree by a few
+  seconds, so one moment gets marked at 3:45, 3:47 and 3:48. Hard bin edges
+  split that across two bins and can hide the best moment in the video.
+- **Unique authors, not mention count.** One enthusiast posting the same
+  timestamp twelve times is one vote. Without this the ranking fills with
+  single-fan moments.
+- **Likes weighted logarithmically.** A heavily-liked comment means many people
+  agreed, but linear weighting lets one viral comment outvote fifty independent
+  viewers.
+- **Non-maximum suppression.** Two peaks four seconds apart are one joke, not
+  two clips.
+- **Both timestamp conventions.** On long VODs viewers mix `1:23:20` and
+  `83:20`. Capping minutes at 59 silently discards every mark of the second
+  kind, precisely on the long videos clip mining exists for.
+
+Against a simulated 4-hour VOD with five planted moments, all five come back as
+the top five - 20-32 distinct people and 100-178x sharpness - cleanly separated
+from noise peaks at 4-5 people and ~10x.
+
+Precision comes from the duration bound, not the regex: `$5:00` and `2:1` parse
+as clock-shaped, and are rejected because they fall outside the video's length.
+
+### On clipping other people's content
+
+Check the creator's policy before building a channel on it. Many streamers
+explicitly welcome clip channels, some require credit, and some do not permit
+monetized reuploads. That is a permissions question rather than a technical
+one, and it is what decides whether the channel survives.
 
 ## Harvesting at scale
 
@@ -179,7 +234,7 @@ sample and falls back to a conservative default instead.
 python -m unittest discover -s tests -v
 ```
 
-83 tests. The load-bearing ones are not the arithmetic checks - they are the
+105 tests. The load-bearing ones are not the arithmetic checks - they are the
 pair that plant a known effect in synthetic data and assert the engine
 recovers it, *and* plant nothing and assert it stays quiet. A pattern finder
 that always finds a pattern is a random number generator with a table.

@@ -20,6 +20,7 @@ from datetime import datetime, timezone
 from . import __version__, report
 from .audit import audit_channel
 from .client import QuotaExceeded, YouTubeClient
+from .clips import find_clips, mentions_from_comments, render_clips
 from .fixtures import make_corpus
 from .harvest import DEFAULT_REGIONS, DEFAULT_SEEDS, Harvester, HarvestPlan, estimate_quota
 from .metrics import AgeCurve, score_channel
@@ -146,6 +147,49 @@ def cmd_harvest(args, client):
     return 0
 
 
+def cmd_clips(args, client):
+    """Mine a video (or a channel's recent uploads) for clippable moments."""
+    if client is None:
+        print("error: clip mining reads real comments; needs YOUTUBE_API_KEY",
+              file=sys.stderr)
+        return 2
+
+    if args.video:
+        video_ids = args.video.split(",")
+    else:
+        ch = client.channel(args.channel)
+        print(f"  scanning {ch.title}: {args.scan} most recent uploads")
+        uploads = client.channel_uploads(ch, limit=args.scan)
+        # Long videos only. A Short has nothing to clip out of it, and
+        # timestamp comments are a long-form behaviour to begin with.
+        longform = [v for v in uploads if v.duration_s >= args.min_duration]
+        print(f"  {len(longform)} of {len(uploads)} are long enough to clip")
+        video_ids = [v.video_id for v in longform]
+
+    if not video_ids:
+        print("  nothing to mine.")
+        return 0
+
+    videos = {v.video_id: v for v in client.videos_by_id(video_ids)}
+    any_found = False
+    for vid in video_ids:
+        v = videos.get(vid)
+        if not v or v.duration_s <= 0:
+            continue
+        raw = client.comments(vid, limit=args.comments)
+        mentions = mentions_from_comments(raw, v.duration_s)
+        cands = find_clips(mentions, v.duration_s, max_clips=args.limit,
+                           min_authors=args.min_authors)
+        if cands or args.video:
+            any_found = any_found or bool(cands)
+            print(render_clips(cands, v.title[:60]))
+            print(f"  source: https://youtu.be/{vid}  "
+                  f"({len(raw)} comments -> {len(mentions)} timestamp votes)")
+    if not any_found:
+        print("\n  No clippable moments cleared the bar on any video scanned.")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="ytengine", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -185,6 +229,18 @@ def build_parser() -> argparse.ArgumentParser:
     common(sp)
     sp.set_defaults(fn=cmd_audit)
 
+    sp = sub.add_parser("clips", help="find clippable moments via comment timestamps")
+    common(sp)
+    sp.add_argument("--video", help="comma-separated video ids to mine")
+    sp.add_argument("--scan", type=int, default=25, help="recent uploads to scan on a channel")
+    sp.add_argument("--comments", type=int, default=500, help="comments to pull per video")
+    sp.add_argument("--limit", type=int, default=10, help="clips to report per video")
+    sp.add_argument("--min-authors", type=int, default=4,
+                    help="distinct people who must mark a moment for it to count")
+    sp.add_argument("--min-duration", type=int, default=600,
+                    help="ignore uploads shorter than this many seconds")
+    sp.set_defaults(fn=cmd_clips)
+
     sp = sub.add_parser("harvest", help="build a large corpus, resumably")
     common(sp)
     sp.add_argument("--target", type=int, default=30000, help="videos to add this run")
@@ -214,10 +270,15 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
-    if getattr(args, "offline", False) and args.cmd != "harvest":
+    if getattr(args, "offline", False) and args.cmd not in ("harvest", "clips"):
         print(OFFLINE_BANNER)
-    elif args.cmd != "harvest" and hasattr(args, "niche") and not (args.niche or args.channel):
+    elif args.cmd not in ("harvest", "clips") and hasattr(args, "niche") \
+            and not (args.niche or args.channel):
         print("error: need --niche or --channel (or --offline to try it out)", file=sys.stderr)
+        return 2
+
+    if args.cmd == "clips" and not (args.video or args.channel):
+        print("error: clips needs --video or --channel", file=sys.stderr)
         return 2
 
     client = None

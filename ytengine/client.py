@@ -34,7 +34,8 @@ from .models import Channel, Video
 
 API_ROOT = "https://www.googleapis.com/youtube/v3"
 
-QUOTA_COST = {"search": 100, "videos": 1, "channels": 1, "playlistItems": 1}
+QUOTA_COST = {"search": 100, "videos": 1, "channels": 1,
+              "playlistItems": 1, "commentThreads": 1}
 
 
 class QuotaExceeded(RuntimeError):
@@ -175,6 +176,31 @@ class YouTubeClient:
             if item.get("contentDetails", {}).get("videoId")
         ]
         return self.videos_by_id(ids)
+
+    def comments(self, video_id: str, limit: int = 500) -> list[dict]:
+        """Top-level comments, newest-relevance first. 1 unit per 100.
+
+        Cheap, and far more useful than it looks: viewers timestamp the moments
+        they want to re-watch, which is the closest public proxy there is to
+        YouTube's private `mostReplayed` heatmap. `clips.py` mines them.
+
+        Comments are disabled on plenty of videos, and that is a normal state
+        rather than an error - it returns empty so a batch run over hundreds of
+        videos does not die on the first one with comments turned off.
+        """
+        try:
+            return list(
+                self._paginate(
+                    "commentThreads",
+                    {"part": "snippet", "videoId": video_id, "order": "relevance",
+                     "textFormat": "plainText"},
+                    cap=limit,
+                )
+            )
+        except RuntimeError as e:
+            if "commentsDisabled" in str(e) or "403" in str(e):
+                return []
+            raise
 
     def search_video_ids(
         self,
