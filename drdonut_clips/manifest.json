@@ -1,0 +1,353 @@
+[
+  {
+    "clip": "clip01_oafS9P4zFZo_265",
+    "video_id": "oafS9P4zFZo",
+    "video_title": "Rating Your Minecraft Roller Coasters",
+    "video_views": 1164174,
+    "start_s": 265.0,
+    "end_s": 281.3,
+    "duration_s": 16.3,
+    "timestamp": "4:25",
+    "people_marked": 10,
+    "sharpness": 26.0,
+    "confidence": "medium",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 13.7s of dead air off the tail"
+    ],
+    "viewer_comments": [
+      "4:39 \u201cTHE FIH\u201d\ud83d\udde3\ufe0f\ud83d\udd25\ud83d\udd25\ud83d\udd25\ud83d\udd25\ud83d\udd25\ud83d\udd25",
+      "4:38 \"THE FIH!\"",
+      "4:40  THE FISH"
+    ],
+    "source_url": "https://youtu.be/oafS9P4zFZo?t=265",
+    "ffmpeg": "ffmpeg -y -ss 265.00 -i oafS9P4zFZo.mp4 -t 16.30 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip01_oafS9P4zFZo_265.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip01_oafS9P4zFZo_265.mp4"
+  },
+  {
+    "clip": "clip02_oafS9P4zFZo_0",
+    "video_id": "oafS9P4zFZo",
+    "video_title": "Rating Your Minecraft Roller Coasters",
+    "video_views": 1164174,
+    "start_s": 0.0,
+    "end_s": 8.0,
+    "duration_s": 8.0,
+    "timestamp": "0:00",
+    "people_marked": 8,
+    "sharpness": 16.2,
+    "confidence": "medium",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 11.0s of dead air off the tail",
+      "dropped the hook - captions already occupy the opening"
+    ],
+    "viewer_comments": [
+      "0:10 I finally can see the clip!",
+      "0:00 THE JAWLINE BRO LIKE DAYYUM.",
+      "0:00 holy psl"
+    ],
+    "source_url": "https://youtu.be/oafS9P4zFZo?t=0",
+    "ffmpeg": "ffmpeg -y -ss 0.00 -i oafS9P4zFZo.mp4 -t 8.00 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip02_oafS9P4zFZo_0.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip02_oafS9P4zFZo_0.mp4"
+  },
+  {
+    "clip": "clip03_oafS9P4zFZo_622",
+    "video_id": "oafS9P4zFZo",
+    "video_title": "Rating Your Minecraft Roller Coasters",
+    "video_views": 1164174,
+    "start_s": 622.0,
+    "end_s": 638.3,
+    "duration_s": 16.3,
+    "timestamp": "10:22",
+    "people_marked": 7,
+    "sharpness": 17.8,
+    "confidence": "medium",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 13.7s of dead air off the tail"
+    ],
+    "viewer_comments": [
+      "10:36 fym get out of my face",
+      "10:35 \"Can I get a screenshot?\" \"Get out of my face bro\"  your editor did you so dirty\n12:52\n20:14\n28:38\n32:56\n41:14",
+      "10:35 dang bro its just a screenshot"
+    ],
+    "source_url": "https://youtu.be/oafS9P4zFZo?t=622",
+    "ffmpeg": "ffmpeg -y -ss 622.00 -i oafS9P4zFZo.mp4 -t 16.30 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip03_oafS9P4zFZo_622.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip03_oafS9P4zFZo_622.mp4"
+  },
+  {
+    "clip": "clip04_oafS9P4zFZo_657",
+    "video_id": "oafS9P4zFZo",
+    "video_title": "Rating Your Minecraft Roller Coasters",
+    "video_views": 1164174,
+    "start_s": 657.0,
+    "end_s": 673.3,
+    "duration_s": 16.3,
+    "timestamp": "10:57",
+    "people_marked": 5,
+    "sharpness": 18.5,
+    "confidence": "low",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 13.7s of dead air off the tail"
+    ],
+    "viewer_comments": [
+      "11:10 Video recorded so long ago bro didnt even have me",
+      "11:17 bro WTF chill\ud83d\ude2d\u270c\ufe0f",
+      "11:11 he is speaking french"
+    ],
+    "source_url": "https://youtu.be/oafS9P4zFZo?t=657",
+    "ffmpeg": "ffmpeg -y -ss 657.00 -i oafS9P4zFZo.mp4 -t 16.30 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip04_oafS9P4zFZo_657.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip04_oafS9P4zFZo_657.mp4"
+  },
+  {
+    "clip": "clip05_oafS9P4zFZo_1076",
+    "video_id": "oafS9P4zFZo",
+    "video_title": "Rating Your Minecraft Roller Coasters",
+    "video_views": 1164174,
+    "start_s": 1076.0,
+    "end_s": 1092.3,
+    "duration_s": 16.3,
+    "timestamp": "17:56",
+    "people_marked": 4,
+    "sharpness": 4.3,
+    "confidence": "low",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "crowd too thin (4 people, 4.3x); pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 13.7s of dead air off the tail"
+    ],
+    "viewer_comments": [
+      "18:10 Death by glamour reference",
+      "18:07 why does this sounded like death by glamour by mettaton\ud83d\ude2d",
+      "18:09  w music"
+    ],
+    "source_url": "https://youtu.be/oafS9P4zFZo?t=1076",
+    "ffmpeg": "ffmpeg -y -ss 1076.00 -i oafS9P4zFZo.mp4 -t 16.30 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip05_oafS9P4zFZo_1076.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip05_oafS9P4zFZo_1076.mp4"
+  },
+  {
+    "clip": "clip06_9HM5HJRqqtQ_9345",
+    "video_id": "9HM5HJRqqtQ",
+    "video_title": "\u200b",
+    "video_views": 775281,
+    "start_s": 9345.0,
+    "end_s": 9361.3,
+    "duration_s": 16.3,
+    "timestamp": "155:45",
+    "people_marked": 10,
+    "sharpness": 78.9,
+    "confidence": "medium",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 13.7s of dead air off the tail"
+    ],
+    "viewer_comments": [
+      "2:36:00 if you pause at right time at 0.25 speed you see a player",
+      "At 2:36:00 if you pause it right, you can see whlspy",
+      "The verity guys username is Whlspy for anyone wondering itf u pause when he dissapears on 2:35:50"
+    ],
+    "source_url": "https://youtu.be/9HM5HJRqqtQ?t=9345",
+    "ffmpeg": "ffmpeg -y -ss 9345.00 -i 9HM5HJRqqtQ.mp4 -t 16.30 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip06_9HM5HJRqqtQ_9345.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip06_9HM5HJRqqtQ_9345.mp4"
+  },
+  {
+    "clip": "clip07_9HM5HJRqqtQ_10128",
+    "video_id": "9HM5HJRqqtQ",
+    "video_title": "\u200b",
+    "video_views": 775281,
+    "start_s": 10128.0,
+    "end_s": 10144.3,
+    "duration_s": 16.3,
+    "timestamp": "168:48",
+    "people_marked": 9,
+    "sharpness": 68.6,
+    "confidence": "medium",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 13.7s of dead air off the tail"
+    ],
+    "viewer_comments": [
+      "2:49:03 NOOO VERITY MISSES MOB \ud83e\udd79\ud83d\udc94\n\nSomeone tell him Mob is gonna make him a marketable plush\n\nCan yall stop blowing up my phone \ud83e\udee9\ud83d\udc94",
+      "2:49:03 OMGG BRO, HE MISSES MOB\ud83d\ude22\nOh wow TX for 100 likes!",
+      "2:48:40 ouh did bro got flashback on the Lab\ud83d\udc40"
+    ],
+    "source_url": "https://youtu.be/9HM5HJRqqtQ?t=10128",
+    "ffmpeg": "ffmpeg -y -ss 10128.00 -i 9HM5HJRqqtQ.mp4 -t 16.30 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip07_9HM5HJRqqtQ_10128.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip07_9HM5HJRqqtQ_10128.mp4"
+  },
+  {
+    "clip": "clip08_9HM5HJRqqtQ_6620",
+    "video_id": "9HM5HJRqqtQ",
+    "video_title": "\u200b",
+    "video_views": 775281,
+    "start_s": 6620.0,
+    "end_s": 6636.3,
+    "duration_s": 16.3,
+    "timestamp": "110:20",
+    "people_marked": 4,
+    "sharpness": 46.3,
+    "confidence": "low",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "crowd too thin (4 people, 46.3x); pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 13.7s of dead air off the tail"
+    ],
+    "viewer_comments": [
+      "- 1:50:33 Dr Donutt Find Verity\n- 3:03:48 Dr Donutt Last Part of Verity Mod",
+      "1:50:33  Also this is Exact moment Dr Donutt find Verity inside the box.",
+      "verity spawns at 1:50:36 for the people wondering"
+    ],
+    "source_url": "https://youtu.be/9HM5HJRqqtQ?t=6620",
+    "ffmpeg": "ffmpeg -y -ss 6620.00 -i 9HM5HJRqqtQ.mp4 -t 16.30 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip08_9HM5HJRqqtQ_6620.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip08_9HM5HJRqqtQ_6620.mp4"
+  },
+  {
+    "clip": "clip09_9HM5HJRqqtQ_5360",
+    "video_id": "9HM5HJRqqtQ",
+    "video_title": "\u200b",
+    "video_views": 775281,
+    "start_s": 5360.0,
+    "end_s": 5376.3,
+    "duration_s": 16.3,
+    "timestamp": "89:20",
+    "people_marked": 4,
+    "sharpness": 39.1,
+    "confidence": "low",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "crowd too thin (4 people, 39.1x); pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 13.7s of dead air off the tail"
+    ],
+    "viewer_comments": [
+      "he started playing the verity mod at 1:29:36 for anyone wondering!",
+      "1:29:30 homer let the barts out is crazy",
+      "Beginning of mod (1:29:36)          End of mod 3:03:45"
+    ],
+    "source_url": "https://youtu.be/9HM5HJRqqtQ?t=5360",
+    "ffmpeg": "ffmpeg -y -ss 5360.00 -i 9HM5HJRqqtQ.mp4 -t 16.30 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip09_9HM5HJRqqtQ_5360.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip09_9HM5HJRqqtQ_5360.mp4"
+  },
+  {
+    "clip": "clip10_9HM5HJRqqtQ_7132",
+    "video_id": "9HM5HJRqqtQ",
+    "video_title": "\u200b",
+    "video_views": 775281,
+    "start_s": 7132.0,
+    "end_s": 7148.3,
+    "duration_s": 16.3,
+    "timestamp": "118:52",
+    "people_marked": 5,
+    "sharpness": 16.5,
+    "confidence": "low",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 13.7s of dead air off the tail"
+    ],
+    "viewer_comments": [
+      "1:59:06 HOLY HELL THATS APOCALYPSE BIRDS SCREAM?? PROJECT MOON REFERENCEEE",
+      "1:59:05  my heart stopped for a sec \ud83d\ude2d\ud83d\ude2d i was watching at 1:43am",
+      "1:59:05 bro you can RECOGNISE mob bro LMAO"
+    ],
+    "source_url": "https://youtu.be/9HM5HJRqqtQ?t=7132",
+    "ffmpeg": "ffmpeg -y -ss 7132.00 -i 9HM5HJRqqtQ.mp4 -t 16.30 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip10_9HM5HJRqqtQ_7132.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip10_9HM5HJRqqtQ_7132.mp4"
+  },
+  {
+    "clip": "clip11_9HM5HJRqqtQ_11012",
+    "video_id": "9HM5HJRqqtQ",
+    "video_title": "\u200b",
+    "video_views": 775281,
+    "start_s": 11012.0,
+    "end_s": 11028.3,
+    "duration_s": 16.3,
+    "timestamp": "183:32",
+    "people_marked": 4,
+    "sharpness": 34.0,
+    "confidence": "low",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "crowd too thin (4 people, 34.0x); pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 13.7s of dead air off the tail"
+    ],
+    "viewer_comments": [
+      "- 1:50:33 Dr Donutt Find Verity\n- 3:03:48 Dr Donutt Last Part of Verity Mod",
+      "3:03:40 verity said donuts name \u201cNothing will work Nate",
+      "Beginning of mod (1:29:36)          End of mod 3:03:45"
+    ],
+    "source_url": "https://youtu.be/9HM5HJRqqtQ?t=11012",
+    "ffmpeg": "ffmpeg -y -ss 11012.00 -i 9HM5HJRqqtQ.mp4 -t 16.30 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip11_9HM5HJRqqtQ_11012.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip11_9HM5HJRqqtQ_11012.mp4"
+  },
+  {
+    "clip": "clip12_9HM5HJRqqtQ_8725",
+    "video_id": "9HM5HJRqqtQ",
+    "video_title": "\u200b",
+    "video_views": 775281,
+    "start_s": 8725.0,
+    "end_s": 8741.3,
+    "duration_s": 16.3,
+    "timestamp": "145:25",
+    "people_marked": 4,
+    "sharpness": 33.0,
+    "confidence": "low",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "crowd too thin (4 people, 33.0x); pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 13.7s of dead air off the tail"
+    ],
+    "viewer_comments": [
+      "2:25:37 LMAO IM CRINE WISPY WAS NOT HAVING IT\ud83d\ude2d",
+      "2:25:44 donut with the survivial instinct of a donut sprinkle",
+      "2:25:34 bro sounds like my mom when she tells we are going somewhere I don't wanna go"
+    ],
+    "source_url": "https://youtu.be/9HM5HJRqqtQ?t=8725",
+    "ffmpeg": "ffmpeg -y -ss 8725.00 -i 9HM5HJRqqtQ.mp4 -t 16.30 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip12_9HM5HJRqqtQ_8725.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip12_9HM5HJRqqtQ_8725.mp4"
+  },
+  {
+    "clip": "clip13_9HM5HJRqqtQ_6098",
+    "video_id": "9HM5HJRqqtQ",
+    "video_title": "\u200b",
+    "video_views": 775281,
+    "start_s": 6098.0,
+    "end_s": 6114.3,
+    "duration_s": 16.3,
+    "timestamp": "101:38",
+    "people_marked": 4,
+    "sharpness": 26.9,
+    "confidence": "low",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "crowd too thin (4 people, 26.9x); pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 13.7s of dead air off the tail"
+    ],
+    "viewer_comments": [
+      "donut is actually tweaking out 1:41:59",
+      "1:41:52 valid crash out blue donut guy",
+      "1:41:44 crashout"
+    ],
+    "source_url": "https://youtu.be/9HM5HJRqqtQ?t=6098",
+    "ffmpeg": "ffmpeg -y -ss 6098.00 -i 9HM5HJRqqtQ.mp4 -t 16.30 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip13_9HM5HJRqqtQ_6098.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip13_9HM5HJRqqtQ_6098.mp4"
+  },
+  {
+    "clip": "clip14_bULfieZael0_14872",
+    "video_id": "bULfieZael0",
+    "video_title": "\u200b",
+    "video_views": 614095,
+    "start_s": 14872.0,
+    "end_s": 14888.3,
+    "duration_s": 16.3,
+    "timestamp": "247:52",
+    "people_marked": 9,
+    "sharpness": 218.2,
+    "confidence": "medium",
+    "gate": "BACK TO EDIT",
+    "gate_reason": "pacing below floor (coverage or dead air)",
+    "revisions": [
+      "trimmed 13.7s of dead air off the tail"
+    ],
+    "viewer_comments": [
+      "4:08:07 donut base gets raided if anyone is wondering",
+      "4:08:00 truezay appears in donuts base",
+      "4:08:08 Truezay destroys Dr Donuts Base"
+    ],
+    "source_url": "https://youtu.be/bULfieZael0?t=14872",
+    "ffmpeg": "ffmpeg -y -ss 14872.00 -i bULfieZael0.mp4 -t 16.30 -vf 'scale=1080:-2:force_original_aspect_ratio=increase,crop=1080:1920:(in_w-out_w)/2:(in_h-out_h)/2,subtitles='\"'\"'clip14_bULfieZael0_14872.ass'\"'\"'' -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart clip14_bULfieZael0_14872.mp4"
+  }
+]
