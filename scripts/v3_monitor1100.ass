@@ -1,0 +1,61 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding
+Style: Caption,Impact,84,&H00FFFFFF&,&H0000FFFF&,&H00000000&,&H80000000&,-1,0,0,0,100,100,0,0,1,7,3,2,60,60,729,1
+Style: Hook,Impact,88,&H00FFFFFF&,&H0000FFFF&,&H00000000&,&H90000000&,-1,0,0,0,100,100,0,0,1,8,4,8,60,60,345,1
+
+[Events]
+Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
+Dialogue: 0,0:00:00.00,0:00:02.50,Hook,,0,0,0,,1100 HERTZ
+Dialogue: 0,0:00:00.35,0:00:01.08,Caption,,0,0,0,,SAMSUNG BUILT
+Dialogue: 0,0:00:01.11,0:00:01.73,Caption,,0,0,0,,AN ELEVEN
+Dialogue: 0,0:00:01.76,0:00:02.49,Caption,,0,0,0,,HUNDRED HERTZ
+Dialogue: 0,0:00:02.52,0:00:03.38,Caption,,0,0,0,,MONITOR YOUR
+Dialogue: 0,0:00:03.41,0:00:04.00,Caption,,0,0,0,,EYE DOES
+Dialogue: 0,0:00:04.03,0:00:04.60,Caption,,0,0,0,,NOT SEE
+Dialogue: 0,0:00:04.63,0:00:05.39,Caption,,0,0,0,,ELEVEN HUNDRED
+Dialogue: 0,0:00:05.42,0:00:06.24,Caption,,0,0,0,,FRAMES THAT
+Dialogue: 0,0:00:06.27,0:00:06.81,Caption,,0,0,0,,IS NOT
+Dialogue: 0,0:00:06.84,0:00:07.41,Caption,,0,0,0,,WHAT IT
+Dialogue: 0,0:00:07.44,0:00:07.98,Caption,,0,0,0,,IS FOR
+Dialogue: 0,0:00:08.16,0:00:08.76,Caption,,0,0,0,,AT SIXTY
+Dialogue: 0,0:00:08.79,0:00:09.36,Caption,,0,0,0,,HERTZ A
+Dialogue: 0,0:00:09.38,0:00:10.04,Caption,,0,0,0,,FRAME SITS
+Dialogue: 0,0:00:10.06,0:00:10.74,Caption,,0,0,0,,FOR SIXTEEN
+Dialogue: 0,0:00:10.77,0:00:11.71,Caption,,0,0,0,,MILLISECONDS AT
+Dialogue: 0,0:00:11.73,0:00:12.49,Caption,,0,0,0,,ELEVEN HUNDRED
+Dialogue: 0,0:00:12.52,0:00:13.09,Caption,,0,0,0,,IT SITS
+Dialogue: 0,0:00:13.12,0:00:13.74,Caption,,0,0,0,,FOR UNDER
+Dialogue: 0,0:00:13.77,0:00:14.46,Caption,,0,0,0,,ONE SO
+Dialogue: 0,0:00:14.49,0:00:15.12,Caption,,0,0,0,,THE IMAGE
+Dialogue: 0,0:00:15.14,0:00:15.90,Caption,,0,0,0,,STOPS SMEARING
+Dialogue: 0,0:00:15.93,0:00:16.53,Caption,,0,0,0,,WHEN YOU
+Dialogue: 0,0:00:16.55,0:00:17.30,Caption,,0,0,0,,FLICK IT
+Dialogue: 0,0:00:17.33,0:00:17.87,Caption,,0,0,0,,IS NOT
+Dialogue: 0,0:00:17.90,0:00:18.58,Caption,,0,0,0,,MORE FRAMES
+Dialogue: 0,0:00:18.61,0:00:19.26,Caption,,0,0,0,,YOU NOTICE
+Dialogue: 0,0:00:19.44,0:00:19.95,Caption,,0,0,0,,IT IS
+Dialogue: 0,0:00:19.98,0:00:20.60,Caption,,0,0,0,,LESS BLUR
+Dialogue: 0,0:00:20.78,0:00:21.41,Caption,,0,0,0,,THE CATCH
+Dialogue: 0,0:00:21.43,0:00:21.98,Caption,,0,0,0,,IS YOU
+Dialogue: 0,0:00:22.00,0:00:22.68,Caption,,0,0,0,,NEED ELEVEN
+Dialogue: 0,0:00:22.71,0:00:23.39,Caption,,0,0,0,,HUNDRED FPS
+Dialogue: 0,0:00:23.42,0:00:23.99,Caption,,0,0,0,,TO FEED
+Dialogue: 0,0:00:24.01,0:00:24.68,Caption,,0,0,0,,IT NO
+Dialogue: 0,0:00:24.71,0:00:25.31,Caption,,0,0,0,,GPU DOES
+Dialogue: 0,0:00:25.33,0:00:25.90,Caption,,0,0,0,,THAT AT
+Dialogue: 0,0:00:25.93,0:00:26.53,Caption,,0,0,0,,ANY REAL
+Dialogue: 0,0:00:26.56,0:00:27.44,Caption,,0,0,0,,RESOLUTION SO
+Dialogue: 0,0:00:27.47,0:00:28.04,Caption,,0,0,0,,YOU ARE
+Dialogue: 0,0:00:28.06,0:00:28.82,Caption,,0,0,0,,BUYING CLARITY
+Dialogue: 0,0:00:28.85,0:00:29.39,Caption,,0,0,0,,IN OLD
+Dialogue: 0,0:00:29.42,0:00:30.20,Caption,,0,0,0,,GAMES AND
+Dialogue: 0,0:00:30.22,0:00:30.82,Caption,,0,0,0,,A NUMBER
+Dialogue: 0,0:00:30.85,0:00:31.42,Caption,,0,0,0,,FOR THE
+Dialogue: 0,0:00:31.45,0:00:31.72,Caption,,0,0,0,,BOX
