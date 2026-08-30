@@ -272,7 +272,15 @@ def cmd_rpm(args, client):
 
 def cmd_edit(args, client):
     """Turn a clip window into an ASS caption file plus a render command."""
+    import dataclasses
     style = STYLES[args.style]
+    if args.words_per_cue:
+        # Cue length is the main lever on caption width, and the right value
+        # depends on the font that will actually render - a narrow face fits
+        # four words where a wide one overflows at three.
+        style = dataclasses.replace(style, words_per_cue=args.words_per_cue)
+    if args.font_size:
+        style = dataclasses.replace(style, size=args.font_size)
     words = []
     if args.transcript:
         # "start end word" per line - whatever your transcription tool emits.
@@ -289,7 +297,7 @@ def cmd_edit(args, client):
                     cues=cues_from_words(words, style, offset_s=args.start) if words else [])
     with open(args.ass, "w") as fh:
         fh.write(build_ass(spec))
-    if args.auto_style and spec.cues:
+    if args.auto_style and spec.cues and not args.words_per_cue:
         spec.style = suggest_style(spec.cues, spec.duration_s)
         spec.cues = cues_from_words(words, spec.style, offset_s=args.start)
         with open(args.ass, "w") as fh:
@@ -405,6 +413,9 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--hook", help="text held over the first 2.5s")
     sp.add_argument("--crop", default="center", choices=["center", "left", "right"])
     sp.add_argument("--transcript", help="file of 'start end word' lines")
+    sp.add_argument("--words-per-cue", type=int,
+                    help="override the style's cue length (fewer = narrower captions)")
+    sp.add_argument("--font-size", type=int, help="override the style's font size")
     sp.add_argument("--auto-style", action="store_true",
                     help="pick the caption style from the speech pacing")
     sp.add_argument("--ass", default="clip.ass")

@@ -1,0 +1,49 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding
+Style: Caption,Impact,84,&H00FFFFFF&,&H0000FFFF&,&H00000000&,&H80000000&,-1,0,0,0,100,100,0,0,1,7,3,2,60,60,729,1
+Style: Hook,Impact,88,&H00FFFFFF&,&H0000FFFF&,&H00000000&,&H90000000&,-1,0,0,0,100,100,0,0,1,8,4,8,60,60,345,1
+
+[Events]
+Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
+Dialogue: 0,0:00:00.00,0:00:02.50,Hook,,0,0,0,,YOUR CHARGER LIES
+Dialogue: 0,0:00:00.35,0:00:01.03,Caption,,0,0,0,,YOUR PHONE
+Dialogue: 0,0:00:01.06,0:00:01.74,Caption,,0,0,0,,CHARGER IS
+Dialogue: 0,0:00:01.77,0:00:02.40,Caption,,0,0,0,,LYING TO
+Dialogue: 0,0:00:02.43,0:00:03.16,Caption,,0,0,0,,YOU IT
+Dialogue: 0,0:00:03.19,0:00:03.87,Caption,,0,0,0,,SAYS SIXTY
+Dialogue: 0,0:00:03.90,0:00:04.58,Caption,,0,0,0,,FIVE WATTS
+Dialogue: 0,0:00:04.61,0:00:05.18,Caption,,0,0,0,,ON THE
+Dialogue: 0,0:00:05.21,0:00:06.06,Caption,,0,0,0,,BRICK YOUR
+Dialogue: 0,0:00:06.09,0:00:06.80,Caption,,0,0,0,,PHONE PULLS
+Dialogue: 0,0:00:06.83,0:00:07.84,Caption,,0,0,0,,EIGHTEEN BECAUSE
+Dialogue: 0,0:00:07.87,0:00:08.41,Caption,,0,0,0,,USB C
+Dialogue: 0,0:00:08.44,0:00:09.39,Caption,,0,0,0,,NEGOTIATES THE
+Dialogue: 0,0:00:09.42,0:00:10.08,Caption,,0,0,0,,CABLE THE
+Dialogue: 0,0:00:10.11,0:00:10.76,Caption,,0,0,0,,PHONE AND
+Dialogue: 0,0:00:10.79,0:00:11.50,Caption,,0,0,0,,THE CHARGER
+Dialogue: 0,0:00:11.69,0:00:12.34,Caption,,0,0,0,,ALL AGREE
+Dialogue: 0,0:00:12.37,0:00:12.94,Caption,,0,0,0,,ON THE
+Dialogue: 0,0:00:12.97,0:00:13.66,Caption,,0,0,0,,LOWEST ONE
+Dialogue: 0,0:00:13.85,0:00:14.47,Caption,,0,0,0,,AND THAT
+Dialogue: 0,0:00:14.50,0:00:15.21,Caption,,0,0,0,,FIVE DOLLAR
+Dialogue: 0,0:00:15.24,0:00:15.90,Caption,,0,0,0,,CABLE YOU
+Dialogue: 0,0:00:15.93,0:00:16.80,Caption,,0,0,0,,BOUGHT CAPS
+Dialogue: 0,0:00:16.83,0:00:17.48,Caption,,0,0,0,,THE WHOLE
+Dialogue: 0,0:00:17.51,0:00:18.38,Caption,,0,0,0,,THING CHECK
+Dialogue: 0,0:00:18.41,0:00:18.95,Caption,,0,0,0,,FOR E
+Dialogue: 0,0:00:18.98,0:00:19.64,Caption,,0,0,0,,MARKER ON
+Dialogue: 0,0:00:19.67,0:00:20.32,Caption,,0,0,0,,THE CABLE
+Dialogue: 0,0:00:20.51,0:00:21.02,Caption,,0,0,0,,NO E
+Dialogue: 0,0:00:21.05,0:00:21.79,Caption,,0,0,0,,MARKER MEANS
+Dialogue: 0,0:00:21.82,0:00:22.53,Caption,,0,0,0,,SIXTY WATTS
+Dialogue: 0,0:00:22.56,0:00:23.35,Caption,,0,0,0,,MAX YOUR
+Dialogue: 0,0:00:23.38,0:00:24.09,Caption,,0,0,0,,CHARGER WAS
+Dialogue: 0,0:00:24.12,0:00:24.77,Caption,,0,0,0,,NEVER THE
+Dialogue: 0,0:00:24.80,0:00:25.20,Caption,,0,0,0,,PROBLEM
