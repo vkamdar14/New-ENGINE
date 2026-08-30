@@ -1,0 +1,53 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding
+Style: Caption,Impact,84,&H00FFFFFF&,&H0000FFFF&,&H00000000&,&H80000000&,-1,0,0,0,100,100,0,0,1,7,3,2,60,60,729,1
+Style: Hook,Impact,88,&H00FFFFFF&,&H0000FFFF&,&H00000000&,&H90000000&,-1,0,0,0,100,100,0,0,1,8,4,8,60,60,345,1
+
+[Events]
+Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
+Dialogue: 0,0:00:00.00,0:00:02.50,Hook,,0,0,0,,I BOUGHT A $22 SSD
+Dialogue: 0,0:00:00.35,0:00:00.87,Caption,,0,0,0,,I PUT
+Dialogue: 0,0:00:00.89,0:00:01.60,Caption,,0,0,0,,THE CHEAPEST
+Dialogue: 0,0:00:01.63,0:00:02.17,Caption,,0,0,0,,SSD ON
+Dialogue: 0,0:00:02.20,0:00:03.03,Caption,,0,0,0,,AMAZON INTO
+Dialogue: 0,0:00:03.05,0:00:03.62,Caption,,0,0,0,,MY MAIN
+Dialogue: 0,0:00:03.65,0:00:04.43,Caption,,0,0,0,,PC TWENTY
+Dialogue: 0,0:00:04.45,0:00:05.16,Caption,,0,0,0,,TWO DOLLARS,
+Dialogue: 0,0:00:05.19,0:00:05.78,Caption,,0,0,0,,NO BRAND
+Dialogue: 0,0:00:05.81,0:00:06.53,Caption,,0,0,0,,NAME IT
+Dialogue: 0,0:00:06.56,0:00:07.32,Caption,,0,0,0,,BENCHMARKED AT
+Dialogue: 0,0:00:07.35,0:00:08.08,Caption,,0,0,0,,FOUR THOUSAND
+Dialogue: 0,0:00:08.11,0:00:08.79,Caption,,0,0,0,,MEGABYTES A
+Dialogue: 0,0:00:08.81,0:00:09.64,Caption,,0,0,0,,SECOND SAME
+Dialogue: 0,0:00:09.67,0:00:10.16,Caption,,0,0,0,,AS A
+Dialogue: 0,0:00:10.19,0:00:11.04,Caption,,0,0,0,,SAMSUNG THEN
+Dialogue: 0,0:00:11.07,0:00:11.69,Caption,,0,0,0,,I CHECKED
+Dialogue: 0,0:00:11.72,0:00:12.37,Caption,,0,0,0,,THE HEALTH
+Dialogue: 0,0:00:12.40,0:00:12.97,Caption,,0,0,0,,AFTER A
+Dialogue: 0,0:00:13.00,0:00:13.85,Caption,,0,0,0,,MONTH ELEVEN
+Dialogue: 0,0:00:13.88,0:00:14.53,Caption,,0,0,0,,PERCENT OF
+Dialogue: 0,0:00:14.56,0:00:15.18,Caption,,0,0,0,,ITS LIFE,
+Dialogue: 0,0:00:15.21,0:00:15.96,Caption,,0,0,0,,GONE THE
+Dialogue: 0,0:00:15.99,0:00:16.61,Caption,,0,0,0,,SPEED WAS
+Dialogue: 0,0:00:16.64,0:00:17.39,Caption,,0,0,0,,REAL THE
+Dialogue: 0,0:00:17.41,0:00:18.15,Caption,,0,0,0,,ENDURANCE WAS
+Dialogue: 0,0:00:18.17,0:00:18.95,Caption,,0,0,0,,NOT CHEAP
+Dialogue: 0,0:00:18.98,0:00:19.63,Caption,,0,0,0,,DRIVES USE
+Dialogue: 0,0:00:19.65,0:00:20.25,Caption,,0,0,0,,THE FAST
+Dialogue: 0,0:00:20.28,0:00:20.88,Caption,,0,0,0,,CELLS AS
+Dialogue: 0,0:00:20.90,0:00:21.50,Caption,,0,0,0,,A BUFFER
+Dialogue: 0,0:00:21.68,0:00:22.30,Caption,,0,0,0,,THEN FALL
+Dialogue: 0,0:00:22.33,0:00:22.85,Caption,,0,0,0,,OFF A
+Dialogue: 0,0:00:22.88,0:00:23.53,Caption,,0,0,0,,CLIFF WHEN
+Dialogue: 0,0:00:23.55,0:00:24.15,Caption,,0,0,0,,ITS FULL
+Dialogue: 0,0:00:24.33,0:00:24.85,Caption,,0,0,0,,IT IS
+Dialogue: 0,0:00:24.87,0:00:25.55,Caption,,0,0,0,,QUICK UNTIL
+Dialogue: 0,0:00:25.58,0:00:26.15,Caption,,0,0,0,,THE DAY
+Dialogue: 0,0:00:26.18,0:00:26.75,Caption,,0,0,0,,IT ISNT

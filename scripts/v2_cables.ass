@@ -1,0 +1,53 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding
+Style: Caption,Impact,84,&H00FFFFFF&,&H0000FFFF&,&H00000000&,&H80000000&,-1,0,0,0,100,100,0,0,1,7,3,2,60,60,729,1
+Style: Hook,Impact,88,&H00FFFFFF&,&H0000FFFF&,&H00000000&,&H90000000&,-1,0,0,0,100,100,0,0,1,8,4,8,60,60,345,1
+
+[Events]
+Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
+Dialogue: 0,0:00:00.00,0:00:02.50,Hook,,0,0,0,,SIX CABLES ONE PHONE
+Dialogue: 0,0:00:00.35,0:00:00.97,Caption,,0,0,0,,I PLUGGED
+Dialogue: 0,0:00:01.00,0:00:01.73,Caption,,0,0,0,,SIX DIFFERENT
+Dialogue: 0,0:00:01.76,0:00:02.59,Caption,,0,0,0,,CABLES INTO
+Dialogue: 0,0:00:02.62,0:00:03.22,Caption,,0,0,0,,THE SAME
+Dialogue: 0,0:00:03.24,0:00:03.87,Caption,,0,0,0,,PHONE AND
+Dialogue: 0,0:00:03.90,0:00:04.49,Caption,,0,0,0,,THE SAME
+Dialogue: 0,0:00:04.52,0:00:05.38,Caption,,0,0,0,,CHARGER SAME
+Dialogue: 0,0:00:05.40,0:00:06.03,Caption,,0,0,0,,WALL SAME
+Dialogue: 0,0:00:06.05,0:00:06.96,Caption,,0,0,0,,EVERYTHING THE
+Dialogue: 0,0:00:06.99,0:00:07.70,Caption,,0,0,0,,THREE DOLLAR
+Dialogue: 0,0:00:07.73,0:00:08.30,Caption,,0,0,0,,ONE HIT
+Dialogue: 0,0:00:08.32,0:00:09.00,Caption,,0,0,0,,SIXTY WATTS
+Dialogue: 0,0:00:09.18,0:00:09.83,Caption,,0,0,0,,THE TWENTY
+Dialogue: 0,0:00:09.86,0:00:10.62,Caption,,0,0,0,,DOLLAR BRAIDED
+Dialogue: 0,0:00:10.65,0:00:11.45,Caption,,0,0,0,,ONE CAPPED
+Dialogue: 0,0:00:11.47,0:00:12.15,Caption,,0,0,0,,AT EIGHTEEN
+Dialogue: 0,0:00:12.33,0:00:13.01,Caption,,0,0,0,,BECAUSE THE
+Dialogue: 0,0:00:13.04,0:00:13.77,Caption,,0,0,0,,EXPENSIVE ONE
+Dialogue: 0,0:00:13.80,0:00:14.34,Caption,,0,0,0,,HAD NO
+Dialogue: 0,0:00:14.37,0:00:14.96,Caption,,0,0,0,,E MARKER
+Dialogue: 0,0:00:14.99,0:00:15.71,Caption,,0,0,0,,CHIP IT
+Dialogue: 0,0:00:15.74,0:00:16.23,Caption,,0,0,0,,IS A
+Dialogue: 0,0:00:16.26,0:00:16.94,Caption,,0,0,0,,WIRE, THATS
+Dialogue: 0,0:00:16.96,0:00:17.66,Caption,,0,0,0,,IT THE
+Dialogue: 0,0:00:17.68,0:00:18.25,Caption,,0,0,0,,CHIP IS
+Dialogue: 0,0:00:18.28,0:00:18.93,Caption,,0,0,0,,WHAT TELLS
+Dialogue: 0,0:00:18.96,0:00:19.64,Caption,,0,0,0,,THE CHARGER
+Dialogue: 0,0:00:19.82,0:00:20.39,Caption,,0,0,0,,HEY YOU
+Dialogue: 0,0:00:20.41,0:00:21.01,Caption,,0,0,0,,CAN SEND
+Dialogue: 0,0:00:21.04,0:00:21.69,Caption,,0,0,0,,MORE POWER
+Dialogue: 0,0:00:21.87,0:00:22.44,Caption,,0,0,0,,SO HALF
+Dialogue: 0,0:00:22.47,0:00:23.12,Caption,,0,0,0,,THE CABLES
+Dialogue: 0,0:00:23.15,0:00:23.72,Caption,,0,0,0,,IN YOUR
+Dialogue: 0,0:00:23.74,0:00:24.54,Caption,,0,0,0,,DRAWER ARE
+Dialogue: 0,0:00:24.57,0:00:25.28,Caption,,0,0,0,,THROTTLING A
+Dialogue: 0,0:00:25.31,0:00:25.98,Caption,,0,0,0,,CHARGER YOU
+Dialogue: 0,0:00:26.01,0:00:26.72,Caption,,0,0,0,,ALREADY PAID
+Dialogue: 0,0:00:26.74,0:00:27.02,Caption,,0,0,0,,FOR

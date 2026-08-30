@@ -1,0 +1,55 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding
+Style: Caption,Impact,84,&H00FFFFFF&,&H0000FFFF&,&H00000000&,&H80000000&,-1,0,0,0,100,100,0,0,1,7,3,2,60,60,729,1
+Style: Hook,Impact,88,&H00FFFFFF&,&H0000FFFF&,&H00000000&,&H90000000&,-1,0,0,0,100,100,0,0,1,8,4,8,60,60,345,1
+
+[Events]
+Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
+Dialogue: 0,0:00:00.00,0:00:02.50,Hook,,0,0,0,,I SWAPPED HIS RAM
+Dialogue: 0,0:00:00.35,0:00:00.97,Caption,,0,0,0,,I SWAPPED
+Dialogue: 0,0:00:01.00,0:00:01.65,Caption,,0,0,0,,MY FRIENDS
+Dialogue: 0,0:00:01.68,0:00:02.33,Caption,,0,0,0,,THIRTY TWO
+Dialogue: 0,0:00:02.36,0:00:02.93,Caption,,0,0,0,,GIGS OF
+Dialogue: 0,0:00:02.96,0:00:03.71,Caption,,0,0,0,,RAM DOWN
+Dialogue: 0,0:00:03.73,0:00:04.33,Caption,,0,0,0,,TO EIGHT
+Dialogue: 0,0:00:04.36,0:00:04.96,Caption,,0,0,0,,AND SAID
+Dialogue: 0,0:00:04.98,0:00:05.78,Caption,,0,0,0,,NOTHING HE
+Dialogue: 0,0:00:05.81,0:00:06.49,Caption,,0,0,0,,MESSAGED ME
+Dialogue: 0,0:00:06.52,0:00:07.06,Caption,,0,0,0,,IN TWO
+Dialogue: 0,0:00:07.09,0:00:07.92,Caption,,0,0,0,,DAYS ASKING
+Dialogue: 0,0:00:07.95,0:00:08.49,Caption,,0,0,0,,IF HIS
+Dialogue: 0,0:00:08.52,0:00:09.09,Caption,,0,0,0,,GPU WAS
+Dialogue: 0,0:00:09.11,0:00:09.86,Caption,,0,0,0,,DYING IT
+Dialogue: 0,0:00:09.89,0:00:10.46,Caption,,0,0,0,,WAS NOT
+Dialogue: 0,0:00:10.49,0:00:11.06,Caption,,0,0,0,,THE GPU
+Dialogue: 0,0:00:11.23,0:00:11.97,Caption,,0,0,0,,WINDOWS TAKES
+Dialogue: 0,0:00:11.99,0:00:12.65,Caption,,0,0,0,,THREE GIGS
+Dialogue: 0,0:00:12.67,0:00:13.32,Caption,,0,0,0,,BEFORE YOU
+Dialogue: 0,0:00:13.35,0:00:14.08,Caption,,0,0,0,,OPEN ANYTHING
+Dialogue: 0,0:00:14.26,0:00:14.97,Caption,,0,0,0,,CHROME TAKES
+Dialogue: 0,0:00:15.00,0:00:15.72,Caption,,0,0,0,,FOUR SO
+Dialogue: 0,0:00:15.74,0:00:16.37,Caption,,0,0,0,,EVERY TAB
+Dialogue: 0,0:00:16.40,0:00:17.07,Caption,,0,0,0,,WAS HITTING
+Dialogue: 0,0:00:17.10,0:00:17.67,Caption,,0,0,0,,HIS SSD
+Dialogue: 0,0:00:17.70,0:00:18.35,Caption,,0,0,0,,INSTEAD OF
+Dialogue: 0,0:00:18.38,0:00:19.21,Caption,,0,0,0,,MEMORY THAT
+Dialogue: 0,0:00:19.23,0:00:19.78,Caption,,0,0,0,,IS THE
+Dialogue: 0,0:00:19.81,0:00:20.65,Caption,,0,0,0,,STUTTER EVERYBODY
+Dialogue: 0,0:00:20.67,0:00:21.30,Caption,,0,0,0,,BLAMES ON
+Dialogue: 0,0:00:21.33,0:00:22.08,Caption,,0,0,0,,THEIR GRAPHICS
+Dialogue: 0,0:00:22.11,0:00:22.97,Caption,,0,0,0,,CARD SIXTEEN
+Dialogue: 0,0:00:23.00,0:00:23.57,Caption,,0,0,0,,GIGS IS
+Dialogue: 0,0:00:23.59,0:00:24.35,Caption,,0,0,0,,THIRTY DOLLARS
+Dialogue: 0,0:00:24.38,0:00:25.07,Caption,,0,0,0,,USED I
+Dialogue: 0,0:00:25.10,0:00:25.70,Caption,,0,0,0,,TOLD HIM
+Dialogue: 0,0:00:25.73,0:00:26.30,Caption,,0,0,0,,AFTER A
+Dialogue: 0,0:00:26.32,0:00:27.04,Caption,,0,0,0,,WEEK HE
+Dialogue: 0,0:00:27.07,0:00:27.67,Caption,,0,0,0,,IS STILL
+Dialogue: 0,0:00:27.70,0:00:27.97,Caption,,0,0,0,,MAD
