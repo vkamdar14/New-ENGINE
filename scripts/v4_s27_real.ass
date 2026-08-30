@@ -1,0 +1,44 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding
+Style: Caption,Impact,84,&H00FFFFFF&,&H0000FFFF&,&H00000000&,&H80000000&,-1,0,0,0,100,100,0,0,1,7,3,2,60,60,729,1
+
+[Events]
+Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
+Dialogue: 0,0:00:00.30,0:00:00.90,Caption,,0,0,0,,THESE S27
+Dialogue: 0,0:00:00.93,0:00:01.64,Caption,,0,0,0,,ULTRA RENDERS
+Dialogue: 0,0:00:01.66,0:00:02.29,Caption,,0,0,0,,LOOK ROUGH
+Dialogue: 0,0:00:02.48,0:00:02.98,Caption,,0,0,0,,AND I
+Dialogue: 0,0:00:03.01,0:00:03.66,Caption,,0,0,0,,KEEP SEEING
+Dialogue: 0,0:00:03.69,0:00:04.37,Caption,,0,0,0,,PEOPLE PANIC
+Dialogue: 0,0:00:04.40,0:00:05.00,Caption,,0,0,0,,OVER THEM
+Dialogue: 0,0:00:05.19,0:00:05.84,Caption,,0,0,0,,RENDERS ARE
+Dialogue: 0,0:00:05.87,0:00:06.47,Caption,,0,0,0,,NOT LEAKS
+Dialogue: 0,0:00:06.66,0:00:07.37,Caption,,0,0,0,,SOMEBODY READ
+Dialogue: 0,0:00:07.39,0:00:07.94,Caption,,0,0,0,,A RUMOR
+Dialogue: 0,0:00:07.97,0:00:08.57,Caption,,0,0,0,,ABOUT THE
+Dialogue: 0,0:00:08.60,0:00:09.39,Caption,,0,0,0,,CAMERA AND
+Dialogue: 0,0:00:09.42,0:00:09.97,Caption,,0,0,0,,DREW IT
+Dialogue: 0,0:00:09.99,0:00:10.62,Caption,,0,0,0,,IN BLENDER
+Dialogue: 0,0:00:10.81,0:00:11.41,Caption,,0,0,0,,THATS THE
+Dialogue: 0,0:00:11.44,0:00:12.20,Caption,,0,0,0,,ENTIRE PIPELINE
+Dialogue: 0,0:00:12.39,0:00:12.96,Caption,,0,0,0,,HALF THE
+Dialogue: 0,0:00:12.99,0:00:13.65,Caption,,0,0,0,,S26 RENDERS
+Dialogue: 0,0:00:13.67,0:00:14.30,Caption,,0,0,0,,WERE WRONG
+Dialogue: 0,0:00:14.33,0:00:15.12,Caption,,0,0,0,,TOO NOBODY
+Dialogue: 0,0:00:15.14,0:00:15.75,Caption,,0,0,0,,WENT BACK
+Dialogue: 0,0:00:15.77,0:00:16.43,Caption,,0,0,0,,AND CHECKED
+Dialogue: 0,0:00:16.62,0:00:17.19,Caption,,0,0,0,,WAIT FOR
+Dialogue: 0,0:00:17.22,0:00:17.75,Caption,,0,0,0,,A REAL
+Dialogue: 0,0:00:17.77,0:00:18.35,Caption,,0,0,0,,HANDS ON
+Dialogue: 0,0:00:18.54,0:00:19.09,Caption,,0,0,0,,OR JUST
+Dialogue: 0,0:00:19.11,0:00:19.74,Caption,,0,0,0,,WAIT THREE
+Dialogue: 0,0:00:19.77,0:00:20.51,Caption,,0,0,0,,WEEKS IT
+Dialogue: 0,0:00:20.53,0:00:21.14,Caption,,0,0,0,,COMES OUT
+Dialogue: 0,0:00:21.16,0:00:21.79,Caption,,0,0,0,,EITHER WAY

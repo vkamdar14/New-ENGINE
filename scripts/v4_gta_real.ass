@@ -1,0 +1,50 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding
+Style: Caption,Impact,84,&H00FFFFFF&,&H0000FFFF&,&H00000000&,&H80000000&,-1,0,0,0,100,100,0,0,1,7,3,2,60,60,729,1
+
+[Events]
+Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
+Dialogue: 0,0:00:00.30,0:00:00.85,Caption,,0,0,0,,GTA SIX
+Dialogue: 0,0:00:00.88,0:00:01.56,Caption,,0,0,0,,BEING THIRTY
+Dialogue: 0,0:00:01.59,0:00:02.19,Caption,,0,0,0,,FRAMES IS
+Dialogue: 0,0:00:02.22,0:00:02.95,Caption,,0,0,0,,FINE AND
+Dialogue: 0,0:00:02.98,0:00:03.56,Caption,,0,0,0,,YALL ARE
+Dialogue: 0,0:00:03.58,0:00:04.27,Caption,,0,0,0,,GONNA FORGET
+Dialogue: 0,0:00:04.29,0:00:04.87,Caption,,0,0,0,,YOU WERE
+Dialogue: 0,0:00:04.90,0:00:05.58,Caption,,0,0,0,,MAD IN
+Dialogue: 0,0:00:05.61,0:00:06.16,Caption,,0,0,0,,ABOUT A
+Dialogue: 0,0:00:06.19,0:00:07.05,Caption,,0,0,0,,WEEK ROCKSTAR
+Dialogue: 0,0:00:07.08,0:00:07.68,Caption,,0,0,0,,LOOKED AT
+Dialogue: 0,0:00:07.71,0:00:08.39,Caption,,0,0,0,,SIXTY FRAMES
+Dialogue: 0,0:00:08.58,0:00:09.23,Caption,,0,0,0,,THEN LOOKED
+Dialogue: 0,0:00:09.26,0:00:09.79,Caption,,0,0,0,,AT THE
+Dialogue: 0,0:00:09.81,0:00:10.36,Caption,,0,0,0,,SIZE OF
+Dialogue: 0,0:00:10.39,0:00:10.97,Caption,,0,0,0,,THAT MAP
+Dialogue: 0,0:00:11.15,0:00:11.78,Caption,,0,0,0,,AND PICKED
+Dialogue: 0,0:00:11.81,0:00:12.36,Caption,,0,0,0,,THE MAP
+Dialogue: 0,0:00:12.55,0:00:13.15,Caption,,0,0,0,,THATS IT,
+Dialogue: 0,0:00:13.18,0:00:13.78,Caption,,0,0,0,,THATS THE
+Dialogue: 0,0:00:13.81,0:00:14.46,Caption,,0,0,0,,WHOLE THING
+Dialogue: 0,0:00:14.65,0:00:15.23,Caption,,0,0,0,,GO WATCH
+Dialogue: 0,0:00:15.25,0:00:15.94,Caption,,0,0,0,,THE EXTENDED
+Dialogue: 0,0:00:15.96,0:00:16.59,Caption,,0,0,0,,LOOK AGAIN
+Dialogue: 0,0:00:16.78,0:00:17.41,Caption,,0,0,0,,THAT WORLD
+Dialogue: 0,0:00:17.43,0:00:18.01,Caption,,0,0,0,,AT SIXTY
+Dialogue: 0,0:00:18.04,0:00:18.62,Caption,,0,0,0,,WOULD BE
+Dialogue: 0,0:00:18.64,0:00:19.19,Caption,,0,0,0,,HALF AS
+Dialogue: 0,0:00:19.22,0:00:20.01,Caption,,0,0,0,,DENSE SAME
+Dialogue: 0,0:00:20.04,0:00:20.69,Caption,,0,0,0,,PEOPLE WERE
+Dialogue: 0,0:00:20.72,0:00:21.32,Caption,,0,0,0,,MAD ABOUT
+Dialogue: 0,0:00:21.35,0:00:22.14,Caption,,0,0,0,,ZELDA SAME
+Dialogue: 0,0:00:22.16,0:00:22.82,Caption,,0,0,0,,PEOPLE WERE
+Dialogue: 0,0:00:22.85,0:00:23.45,Caption,,0,0,0,,MAD ABOUT
+Dialogue: 0,0:00:23.48,0:00:24.05,Caption,,0,0,0,,RED DEAD
+Dialogue: 0,0:00:24.24,0:00:24.90,Caption,,0,0,0,,YALL PLAYED
+Dialogue: 0,0:00:24.92,0:00:25.53,Caption,,0,0,0,,IT ANYWAY
