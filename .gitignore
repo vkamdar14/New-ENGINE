@@ -10,3 +10,5 @@ drdonut_clips.tar.gz
 drdonut_package/
 reel/
 render/
+batch16/out/
+batch16/*.png

@@ -41,12 +41,48 @@ REVEAL_STEP = 1.1        # gap between answers
 HOLD_SECONDS = 2.0       # hold the completed list before the loop
 
 
+class RankingError(ValueError):
+    """A ranked list whose numbers contradict its order."""
+
+
+def check_ranking(answers: Sequence[str], subtitles: Sequence[str]) -> list[str]:
+    """Verify a ranked list actually descends.
+
+    A quiz that shows "4. Cenk Tosun 20 / 5. Küçükandonyadis 21" is wrong on
+    its face, and a ranking error is the single most punished mistake in this
+    format - the comments exist to correct you and the correction becomes the
+    video. Cheap to check, so it is checked every time rather than eyeballed.
+    """
+    import re as _re
+    vals = []
+    for s_ in subtitles:
+        m = _re.match(r"\s*(\d+)", s_ or "")
+        vals.append(int(m.group(1)) if m else None)
+    problems = []
+    for i in range(len(vals) - 1):
+        a, b = vals[i], vals[i + 1]
+        if a is None or b is None:
+            continue
+        if a < b:
+            problems.append(
+                f"#{i+1} {answers[i]} ({a}) ranks above #{i+2} {answers[i+1]} ({b})")
+    return problems
+
+
 @dataclass
 class Quiz:
     question: str
     answers: Sequence[str]          # already in reveal order
     subtitles: Sequence[str] = ()   # optional right-hand column, e.g. "5 goals"
     accent: str = "&H0000E5FF&"     # ASS BGR - amber
+
+    strict: bool = True             # refuse to build a mis-ranked list
+
+    def __post_init__(self):
+        if self.strict and self.subtitles:
+            problems = check_ranking(self.answers, self.subtitles)
+            if problems:
+                raise RankingError("; ".join(problems))
 
     @property
     def duration_s(self) -> float:

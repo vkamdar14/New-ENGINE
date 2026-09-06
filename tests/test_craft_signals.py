@@ -251,3 +251,44 @@ class TestFontSubstitution(unittest.TestCase):
         spec = EditSpec("s.mp4", 0.0, 25.0, STYLES["punch"],
                         cues=[Cue(3.0, 5.0, "HI")], hook="WAIT")
         self.assertFalse(any(i.where == "font" for i in validate(spec, rendered_font="Impact")))
+
+
+class TestQuizRanking(unittest.TestCase):
+    """A ranked list whose numbers contradict its order is the single most
+    punished error in the quiz format - the comments exist to correct you, and
+    the correction becomes the video. Five of the first sixteen generated were
+    wrong, so the check is enforced at construction rather than eyeballed.
+    """
+
+    def test_detects_an_inverted_pair(self):
+        from ytengine.quizgen import check_ranking
+        problems = check_ranking(["A", "B"], ["20", "21"])
+        self.assertEqual(len(problems), 1)
+        self.assertIn("ranks above", problems[0])
+
+    def test_accepts_a_correct_ranking(self):
+        from ytengine.quizgen import check_ranking
+        self.assertEqual(check_ranking(["A", "B", "C"], ["30", "20", "10"]), [])
+
+    def test_equal_values_are_allowed(self):
+        # Ties are legitimate in football records.
+        from ytengine.quizgen import check_ranking
+        self.assertEqual(check_ranking(["A", "B"], ["9", "9"]), [])
+
+    def test_ignores_non_numeric_subtitles(self):
+        from ytengine.quizgen import check_ranking
+        self.assertEqual(check_ranking(["A", "B"], ["many", "few"]), [])
+
+    def test_parses_a_trailing_plus(self):
+        from ytengine.quizgen import check_ranking
+        self.assertEqual(check_ranking(["A", "B"], ["130+", "47"]), [])
+
+    def test_quiz_refuses_to_build_a_bad_list(self):
+        from ytengine.quizgen import Quiz, RankingError
+        with self.assertRaises(RankingError):
+            Quiz(question="q", answers=["A", "B"], subtitles=["20", "21"])
+
+    def test_strict_can_be_disabled_deliberately(self):
+        from ytengine.quizgen import Quiz
+        q = Quiz(question="q", answers=["A", "B"], subtitles=["20", "21"], strict=False)
+        self.assertEqual(len(q.answers), 2)

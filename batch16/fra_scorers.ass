@@ -1,0 +1,33 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding
+Style: Q,DejaVu Sans,74,&H00FFFFFF&,&H00FFFFFF&,&H00000000&,&H90000000&,-1,0,0,0,100,100,0,0,1,6,3,8,70,70,268,1
+Style: Row,DejaVu Sans,60,&H00FFFFFF&,&H00FFFFFF&,&H00000000&,&H90000000&,-1,0,0,0,100,100,0,0,1,5,2,7,110,110,0,1
+Style: Num,DejaVu Sans,60,&H0000E5FF&,&H0000E5FF&,&H00000000&,&H90000000&,-1,0,0,0,100,100,0,0,1,5,2,7,70,70,0,1
+Style: Timer,DejaVu Sans,52,&H0000E5FF&,&H0000E5FF&,&H00000000&,&H90000000&,-1,0,0,0,100,100,0,0,1,4,2,8,70,70,499,1
+
+[Events]
+Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
+Dialogue: 0,0:00:00.00,0:00:13.50,Q,,0,0,0,,Can you name France's top 5\Nall-time goalscorers?
+Dialogue: 0,0:00:00.00,0:00:01.00,Timer,,0,0,0,,●●●●●●   6
+Dialogue: 0,0:00:01.00,0:00:02.00,Timer,,0,0,0,,●●●●●○   5
+Dialogue: 0,0:00:02.00,0:00:03.00,Timer,,0,0,0,,●●●●○○   4
+Dialogue: 0,0:00:03.00,0:00:04.00,Timer,,0,0,0,,●●●○○○   3
+Dialogue: 0,0:00:04.00,0:00:05.00,Timer,,0,0,0,,●●○○○○   2
+Dialogue: 0,0:00:05.00,0:00:06.00,Timer,,0,0,0,,●○○○○○   1
+Dialogue: 0,0:00:06.00,0:00:13.50,Num,,0,0,0,,{\pos(90,652)}1.
+Dialogue: 0,0:00:06.00,0:00:13.50,Row,,0,0,0,,{\pos(170,652)}Olivier Giroud   57
+Dialogue: 0,0:00:07.10,0:00:13.50,Num,,0,0,0,,{\pos(90,796)}2.
+Dialogue: 0,0:00:07.10,0:00:13.50,Row,,0,0,0,,{\pos(170,796)}Thierry Henry   51
+Dialogue: 0,0:00:08.20,0:00:13.50,Num,,0,0,0,,{\pos(90,940)}3.
+Dialogue: 0,0:00:08.20,0:00:13.50,Row,,0,0,0,,{\pos(170,940)}Kylian Mbappé   50+
+Dialogue: 0,0:00:09.30,0:00:13.50,Num,,0,0,0,,{\pos(90,1084)}4.
+Dialogue: 0,0:00:09.30,0:00:13.50,Row,,0,0,0,,{\pos(170,1084)}Antoine Griezmann   44
+Dialogue: 0,0:00:10.40,0:00:13.50,Num,,0,0,0,,{\pos(90,1228)}5.
+Dialogue: 0,0:00:10.40,0:00:13.50,Row,,0,0,0,,{\pos(170,1228)}Michel Platini   41

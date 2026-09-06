@@ -1,0 +1,354 @@
+[
+  {
+    "n": 1,
+    "slug": "eng_pl_scorers",
+    "country": "ENGLAND",
+    "dur": 13.5,
+    "verify": "high \u2014 Kane's total moves",
+    "title": "Can you name England's top 5? \u26bd",
+    "answers": [
+      "Alan Shearer",
+      "Harry Kane",
+      "Wayne Rooney",
+      "Andy Cole",
+      "Frank Lampard"
+    ],
+    "values": [
+      "260",
+      "213",
+      "208",
+      "187",
+      "177"
+    ]
+  },
+  {
+    "n": 2,
+    "slug": "bra_wc_scorers",
+    "country": "BRAZIL",
+    "dur": 13.5,
+    "verify": "HIGH \u2014 2026 World Cup",
+    "title": "Can you name Brazil's top 5? \u26bd",
+    "answers": [
+      "Ronaldo",
+      "Pel\u00e9",
+      "Jairzinho",
+      "Ademir",
+      "Vav\u00e1"
+    ],
+    "values": [
+      "15",
+      "12",
+      "9",
+      "9",
+      "9"
+    ]
+  },
+  {
+    "n": 3,
+    "slug": "arg_caps",
+    "country": "ARGENTINA",
+    "dur": 13.5,
+    "verify": "HIGH \u2014 Messi/Di Mar\u00eda active",
+    "title": "Can you name Argentina's top 5? \u26bd",
+    "answers": [
+      "Lionel Messi",
+      "Javier Mascherano",
+      "Javier Zanetti",
+      "\u00c1ngel Di Mar\u00eda",
+      "Roberto Ayala"
+    ],
+    "values": [
+      "190+",
+      "147",
+      "145",
+      "145",
+      "115"
+    ]
+  },
+  {
+    "n": 4,
+    "slug": "ger_caps",
+    "country": "GERMANY",
+    "dur": 13.5,
+    "verify": "medium \u2014 M\u00fcller's total",
+    "title": "Can you name Germany's top 5? \u26bd",
+    "answers": [
+      "Lothar Matth\u00e4us",
+      "Miroslav Klose",
+      "Thomas M\u00fcller",
+      "Lukas Podolski",
+      "Bastian Schweinsteiger"
+    ],
+    "values": [
+      "150",
+      "137",
+      "130+",
+      "130",
+      "121"
+    ]
+  },
+  {
+    "n": 5,
+    "slug": "fra_scorers",
+    "country": "FRANCE",
+    "dur": 13.5,
+    "verify": "HIGH \u2014 Mbapp\u00e9 active",
+    "title": "Can you name France's top 5? \u26bd",
+    "answers": [
+      "Olivier Giroud",
+      "Thierry Henry",
+      "Kylian Mbapp\u00e9",
+      "Antoine Griezmann",
+      "Michel Platini"
+    ],
+    "values": [
+      "57",
+      "51",
+      "50+",
+      "44",
+      "41"
+    ]
+  },
+  {
+    "n": 6,
+    "slug": "por_scorers",
+    "country": "PORTUGAL",
+    "dur": 13.5,
+    "verify": "HIGH \u2014 Ronaldo active",
+    "title": "Can you name Portugal's top 5? \u26bd",
+    "answers": [
+      "Cristiano Ronaldo",
+      "Pauleta",
+      "Eus\u00e9bio",
+      "Lu\u00eds Figo",
+      "Nuno Gomes"
+    ],
+    "values": [
+      "130+",
+      "47",
+      "41",
+      "32",
+      "29"
+    ]
+  },
+  {
+    "n": 7,
+    "slug": "ita_caps",
+    "country": "ITALY",
+    "dur": 13.5,
+    "verify": "low \u2014 all retired",
+    "title": "Can you name Italy's top 5? \u26bd",
+    "answers": [
+      "Gianluigi Buffon",
+      "Fabio Cannavaro",
+      "Paolo Maldini",
+      "Daniele De Rossi",
+      "Andrea Pirlo"
+    ],
+    "values": [
+      "176",
+      "136",
+      "126",
+      "117",
+      "116"
+    ]
+  },
+  {
+    "n": 8,
+    "slug": "ned_scorers",
+    "country": "NETHERLANDS",
+    "dur": 13.5,
+    "verify": "HIGH \u2014 Depay active",
+    "title": "Can you name Netherlands's top 5? \u26bd",
+    "answers": [
+      "Robin van Persie",
+      "Memphis Depay",
+      "Klaas-Jan Huntelaar",
+      "Patrick Kluivert",
+      "Dennis Bergkamp"
+    ],
+    "values": [
+      "50",
+      "45+",
+      "42",
+      "40",
+      "37"
+    ]
+  },
+  {
+    "n": 9,
+    "slug": "esp_caps",
+    "country": "SPAIN",
+    "dur": 13.5,
+    "verify": "low \u2014 all retired",
+    "title": "Can you name Spain's top 5? \u26bd",
+    "answers": [
+      "Sergio Ramos",
+      "Iker Casillas",
+      "Sergio Busquets",
+      "Xavi",
+      "Andr\u00e9s Iniesta"
+    ],
+    "values": [
+      "180",
+      "167",
+      "143",
+      "133",
+      "131"
+    ]
+  },
+  {
+    "n": 10,
+    "slug": "tur_legends",
+    "country": "TURKEY",
+    "dur": 13.5,
+    "verify": "medium",
+    "title": "Can you name Turkey's top 5? \u26bd",
+    "answers": [
+      "Hakan \u015e\u00fck\u00fcr",
+      "Burak Y\u0131lmaz",
+      "Tuncay \u015eanl\u0131",
+      "Lefter K\u00fc\u00e7\u00fckandonyadis",
+      "Cenk Tosun"
+    ],
+    "values": [
+      "51",
+      "31",
+      "22",
+      "21",
+      "20"
+    ]
+  },
+  {
+    "n": 11,
+    "slug": "rm_scorers",
+    "country": "REAL MADRID",
+    "dur": 13.5,
+    "verify": "low \u2014 all departed",
+    "title": "Can you name Real Madrid's top 5? \u26bd",
+    "answers": [
+      "Cristiano Ronaldo",
+      "Karim Benzema",
+      "Ra\u00fal",
+      "Alfredo Di St\u00e9fano",
+      "Santillana"
+    ],
+    "values": [
+      "450",
+      "354",
+      "323",
+      "308",
+      "290"
+    ]
+  },
+  {
+    "n": 12,
+    "slug": "lfc_scorers",
+    "country": "LIVERPOOL",
+    "dur": 13.5,
+    "verify": "HIGH \u2014 Salah active",
+    "title": "Can you name Liverpool's top 5? \u26bd",
+    "answers": [
+      "Ian Rush",
+      "Roger Hunt",
+      "Gordon Hodgson",
+      "Mohamed Salah",
+      "Billy Liddell"
+    ],
+    "values": [
+      "346",
+      "285",
+      "241",
+      "240+",
+      "228"
+    ]
+  },
+  {
+    "n": 13,
+    "slug": "mufc_scorers",
+    "country": "MAN UNITED",
+    "dur": 13.5,
+    "verify": "low \u2014 all retired",
+    "title": "Can you name Man United's top 5? \u26bd",
+    "answers": [
+      "Wayne Rooney",
+      "Bobby Charlton",
+      "Denis Law",
+      "Jack Rowley",
+      "Dennis Viollet"
+    ],
+    "values": [
+      "253",
+      "249",
+      "237",
+      "211",
+      "179"
+    ]
+  },
+  {
+    "n": 14,
+    "slug": "fcb_scorers",
+    "country": "BARCELONA",
+    "dur": 13.5,
+    "verify": "low \u2014 all departed",
+    "title": "Can you name Barcelona's top 5? \u26bd",
+    "answers": [
+      "Lionel Messi",
+      "C\u00e9sar Rodr\u00edguez",
+      "Luis Su\u00e1rez",
+      "L\u00e1szl\u00f3 Kubala",
+      "Samuel Eto'o"
+    ],
+    "values": [
+      "672",
+      "232",
+      "195",
+      "194",
+      "130"
+    ]
+  },
+  {
+    "n": 15,
+    "slug": "ucl_clubs",
+    "country": "CHAMPIONS LEAGUE",
+    "dur": 13.5,
+    "verify": "HIGH \u2014 2026 final",
+    "title": "Can you name Champions League's top 5? \u26bd",
+    "answers": [
+      "Real Madrid",
+      "AC Milan",
+      "Bayern Munich",
+      "Liverpool",
+      "Barcelona"
+    ],
+    "values": [
+      "15",
+      "7",
+      "6",
+      "6",
+      "5"
+    ]
+  },
+  {
+    "n": 16,
+    "slug": "ballondor",
+    "country": "BALLON D'OR",
+    "dur": 13.5,
+    "verify": "HIGH \u2014 2025/26 awards",
+    "title": "Can you name Ballon D'Or's top 5? \u26bd",
+    "answers": [
+      "Lionel Messi",
+      "Cristiano Ronaldo",
+      "Michel Platini",
+      "Johan Cruyff",
+      "Marco van Basten"
+    ],
+    "values": [
+      "8",
+      "5",
+      "3",
+      "3",
+      "3"
+    ]
+  }
+]
