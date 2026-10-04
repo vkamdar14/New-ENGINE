@@ -1,4 +1,4 @@
-# New-ENGINE — algorithmic chart-pattern edge catalog
+# New-ENGINE — algorithmic chart-pattern edge catalog + reliable backtesting machine. 
 
 Catalogs every chart-based edge and tests it **algorithmically** — kernel-
 regression classical patterns (Lo–Mamaysky–Wang), candlesticks, support/
